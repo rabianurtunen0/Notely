@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1026276895469",
+    "project_id": "notely-27b52",
+    "storage_bucket": "notely-27b52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026276895469:android:8ea33e765c3846ca4bfae4",
+        "android_client_info": {
+          "package_name": "com.example.notely"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026276895469-n7cffkr26p8ba57i4qgsuo2v9236g3ba.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notely",
+            "certificate_hash": "83cc66dd6a8d949c8b0b8fd610e3a1adf89671a9"
+          }
+        },
+        {
+          "client_id": "1026276895469-1uidm9aa8rcdq8c4m3o5qsp9pjofe20r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD81K8rEtLGXs_MjCCyvMv0I6E-aeUpAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026276895469-1uidm9aa8rcdq8c4m3o5qsp9pjofe20r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
