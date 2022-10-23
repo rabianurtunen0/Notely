@@ -35,8 +35,8 @@ ThemeData _lightTheme = ThemeData(
 
 ThemeData _darkTheme = ThemeData(
   fontFamily: 'Nunito',
-  backgroundColor: Color.fromARGB(255, 109, 98, 80),
-  primaryColor: const Color.fromARGB(255, 46, 70, 80),
+  backgroundColor: const Color.fromARGB(255, 81, 77, 72),
+  primaryColor: const Color.fromARGB(255, 29, 44, 51),
 );
 
 bool _light = true;
