@@ -21,7 +21,7 @@ class _LoginState extends State<Login> {
   final _fromKey = GlobalKey<FormState>();
 
   bool _isVisible = true;
-
+  /*
   bool _isChecked = false;
   late Box box1;
 
@@ -48,6 +48,7 @@ class _LoginState extends State<Login> {
       setState(() {});
     }
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +237,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
+                /*
                 Container(
                   margin: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
                   child: Row(
@@ -261,10 +263,11 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                 ),
+                */
                 Container(
                   width: 340,
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+                  margin: const EdgeInsets.fromLTRB(0.0, 46.0, 0.0, 0.0),
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
@@ -275,7 +278,7 @@ class _LoginState extends State<Login> {
                       onPressed: () {
                         login(emailEditingController.text,
                             passwordEditingController.text);
-                        _getData();
+                        //_getData();
                       },
                       child: const Text(
                         'Login',
@@ -339,7 +342,7 @@ class _LoginState extends State<Login> {
       });
     }
   }
-
+  /*
   void _getData() {
     if (_isChecked) {
       box1.put('email', emailEditingController.text);
@@ -349,4 +352,5 @@ class _LoginState extends State<Login> {
       box1.put('password', null);
     }
   }
+  */
 }
