@@ -47,7 +47,7 @@ ThemeData _darkTheme = ThemeData(
   ),
 );
 
-bool _light = true;
+bool _light = false;
 
 class _LightDarkThemeState extends State<LightDarkTheme> {
   @override
