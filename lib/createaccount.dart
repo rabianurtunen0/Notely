@@ -38,27 +38,29 @@ class _CreateAccountState extends State<CreateAccount> {
                 Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 52.0),
-                  child: const Text(
+                  child: Text(
                     'NOTELY',
                     style: TextStyle(
                       fontFamily: 'Titan One',
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w400,
                       fontSize: 20,
-                      color: Color(0XFFEAEAEA),
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
                 Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                  child: const Text(
+                  child: Text(
                     'Create a free account',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w900,
                       fontSize: 24,
-                      color: Color(0XFFEAEAEA),
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                       wordSpacing: 1.5,
                     ),
                   ),
@@ -67,27 +69,30 @@ class _CreateAccountState extends State<CreateAccount> {
                   width: 300,
                   alignment: Alignment.center,
                   margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 52.0),
-                  child: const Text(
+                  child: Text(
                     'Join Notely for free. Create and share unlimited notes with your friends.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      color: Color(0XFFD9D9D9),
+                      color: Theme.of(context)
+                          .textSelectionTheme
+                          .selectionHandleColor,
                     ),
                   ),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(2.0, 0.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 8.0),
+                  child: Text(
                     'Full Name',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -143,14 +148,15 @@ class _CreateAccountState extends State<CreateAccount> {
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(2.0, 20.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 20.0, 0.0, 8.0),
+                  child: Text(
                     'Email Address',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -211,14 +217,15 @@ class _CreateAccountState extends State<CreateAccount> {
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 20.0, 0.0, 8.0),
+                  child: Text(
                     'Password',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -276,6 +283,7 @@ class _CreateAccountState extends State<CreateAccount> {
                               : Icons.visibility_outlined,
                           color: const Color(0XFF595550),
                         ),
+                        splashColor: Colors.transparent,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
@@ -298,10 +306,13 @@ class _CreateAccountState extends State<CreateAccount> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).highlightColor,
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 54,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                       child: const Text(
                         'Create Account',
                         style: TextStyle(
@@ -326,13 +337,18 @@ class _CreateAccountState extends State<CreateAccount> {
                     onPressed: () {
                       Get.to(const Login());
                     },
-                    child: const Text(
+                    style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).backgroundColor),
+                    ),
+                    child: Text(
                       'Already have an account?',
                       style: TextStyle(
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: Color(0XFFEAEAEA),
+                        color:
+                            Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),
@@ -357,8 +373,8 @@ class _CreateAccountState extends State<CreateAccount> {
                 }),
                 Fluttertoast.showToast(
                   msg: "Account created succesfully :) ",
-                  backgroundColor: const Color(0XFFA3333D),
-                  textColor: Colors.white,
+                  backgroundColor: Theme.of(context).highlightColor,
+                  textColor: const Color(0XFFFFFDFA),
                   fontSize: 14.0,
                 ),
                 Get.to(const Login())
@@ -366,8 +382,8 @@ class _CreateAccountState extends State<CreateAccount> {
           .catchError((e) {
         Fluttertoast.showToast(
           msg: e!.message,
-          backgroundColor: const Color(0XFFA3333D),
-          textColor: Colors.white,
+          backgroundColor: Theme.of(context).highlightColor,
+          textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
       });
