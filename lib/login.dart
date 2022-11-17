@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
+import 'package:notely/createaccount.dart';
 import 'package:notely/passwordreset.dart';
 import 'package:notely/startseite.dart';
 
@@ -21,34 +21,6 @@ class _LoginState extends State<Login> {
   final _fromKey = GlobalKey<FormState>();
 
   bool _isVisible = true;
-  /*
-  bool _isChecked = false;
-  late Box box1;
-
-  @override
-  void initState() {
-    super.initState();
-    createBox();
-  }
-
-  void createBox() async {
-    box1 = await Hive.openBox('signData');
-    getData();
-  }
-
-  void getData() {
-    if (box1.get('email') != null) {
-      emailEditingController.text = box1.get('email');
-      _isChecked = true;
-      setState(() {});
-    }
-    if (box1.get('password') != null) {
-      passwordEditingController.text = box1.get('password');
-      _isChecked = true;
-      setState(() {});
-    }
-  }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +31,12 @@ class _LoginState extends State<Login> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: const Icon(
+          onPressed: () => Get.to(const CreateAccount()),
+          icon: Icon(
             Icons.arrow_back,
-            color: Color(0XFFA3333D),
+            color: Theme.of(context).highlightColor,
           ),
+          splashRadius: 20.0,
         ),
       ),
       body: SafeArea(
@@ -76,27 +49,27 @@ class _LoginState extends State<Login> {
                 Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 48.0),
-                  child: const Text(
+                  child: Text(
                     'NOTELY',
                     style: TextStyle(
                       fontFamily: 'Titan One',
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w400,
                       fontSize: 40,
-                      color: Color(0XFFEAEAEA),
+                      color: Theme.of(context).textSelectionTheme.selectionColor, 
                     ),
                   ),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(2.0, 20.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 20.0, 0.0, 8.0),
+                  child: Text(
                     'Email Address',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color: Theme.of(context).textSelectionTheme.selectionColor, 
                     ),
                   ),
                 ),
@@ -157,14 +130,14 @@ class _LoginState extends State<Login> {
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(2.0, 20.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 20.0, 0.0, 8.0),
+                  child: Text(
                     'Password',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color: Theme.of(context).textSelectionTheme.selectionColor, 
                     ),
                   ),
                 ),
@@ -222,6 +195,7 @@ class _LoginState extends State<Login> {
                               : Icons.visibility_outlined,
                           color: const Color(0XFF595550),
                         ),
+                        splashColor: Colors.transparent,
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
@@ -237,33 +211,6 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                /*
-                Container(
-                  margin: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        checkColor: Colors.white,
-                        activeColor:  const Color(0XFFA3333D),
-                          value: _isChecked,
-                          onChanged: (value) async {
-                            _isChecked = !_isChecked;
-                            setState(() {});
-                          }
-                      ),
-                      const Text(
-                        'Keep me logged in',
-                        style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 16,
-                          color: Color(0XFFEAEAEA),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                */
                 Container(
                   width: 340,
                   alignment: Alignment.center,
@@ -271,14 +218,16 @@ class _LoginState extends State<Login> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: const Color(0XFFA3333D),
+                    color: Theme.of(context).highlightColor, 
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 54,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                       onPressed: () {
                         login(emailEditingController.text,
                             passwordEditingController.text);
-                        //_getData();
                       },
                       child: const Text(
                         'Login',
@@ -300,13 +249,17 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       Get.to(const PasswordReset());
                     },
-                    child: const Text(
+                    style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).backgroundColor),
+                    ),
+                    child: Text(
                       'Forgot Password?',
                       style: TextStyle(
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: Color(0XFFEAEAEA),
+                        color: Theme.of(context).textSelectionTheme.selectionColor, 
                       ),
                     ),
                   ),
@@ -326,8 +279,8 @@ class _LoginState extends State<Login> {
           .then((email) async => {
                 Fluttertoast.showToast(
                   msg: "Login succesfully :) ",
-                  backgroundColor: const Color(0XFFA3333D),
-                  textColor: Colors.white,
+                  backgroundColor: Theme.of(context).highlightColor,
+                  textColor: const Color(0XFFFFFDFA),
                   fontSize: 14.0,
                 ),
                 Get.to(const StartSeite())
@@ -335,22 +288,11 @@ class _LoginState extends State<Login> {
           .catchError((e) {
         Fluttertoast.showToast(
           msg: "Sorry, you couldn't not log in. Please check your information.",
-          backgroundColor: const Color(0XFFA3333D),
-          textColor: Colors.white,
+          backgroundColor: Theme.of(context).highlightColor, 
+          textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
       });
     }
   }
-  /*
-  void _getData() {
-    if (_isChecked) {
-      box1.put('email', emailEditingController.text);
-      box1.put('password', passwordEditingController.text);
-    } else {
-      box1.put('email', null);
-      box1.put('password', null);
-    }
-  }
-  */
 }
