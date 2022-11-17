@@ -25,11 +25,12 @@ class _PasswordResetState extends State<PasswordReset> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: const Icon(
+          onPressed: () => Get.to(const Login()),
+          icon: Icon(
             Icons.arrow_back,
-            color: Color(0XFFA3333D),
+            color: Theme.of(context).highlightColor,
           ),
+          splashRadius: 20.0,
         ),
       ),
       body: SafeArea(
@@ -42,27 +43,27 @@ class _PasswordResetState extends State<PasswordReset> {
                 Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.fromLTRB(0.0, 82.0, 0.0, 88.0),
-                  child: const Text(
+                  child: Text(
                     'NOTELY',
                     style: TextStyle(
                       fontFamily: 'Titan One',
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w400,
                       fontSize: 40,
-                      color: Color(0XFFEAEAEA),
+                      color: Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 8.0),
-                  child: const Text(
+                  margin: const EdgeInsets.fromLTRB(5.0, 20.0, 0.0, 8.0),
+                  child: Text(
                     'Email Address',
                     style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Color(0XFFFFFDFA),
+                      color: Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -128,10 +129,13 @@ class _PasswordResetState extends State<PasswordReset> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: const Color(0XFFA3333D),
+                    color: Theme.of(context).highlightColor,
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 54,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                       onPressed: () {
                         resetPassword();
                       },
@@ -156,13 +160,17 @@ class _PasswordResetState extends State<PasswordReset> {
                     onPressed: () {
                       Get.to(const Login());
                     },
-                    child: const Text(
+                    style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).backgroundColor),
+                    ),
+                    child: Text(
                       'Login',
                       style: TextStyle(
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: Color(0XFFEAEAEA),
+                        color: Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),
@@ -182,16 +190,17 @@ class _PasswordResetState extends State<PasswordReset> {
             email: emailEditingController.text.trim());
         Fluttertoast.showToast(
           msg: "Password reset email sent",
-          backgroundColor: const Color(0XFFA3333D),
-          textColor: Colors.white,
+          // ignore: use_build_context_synchronously
+          backgroundColor: Theme.of(context).highlightColor, 
+          textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
         Get.to(const Login());
       } on FirebaseAuthException catch (e) {
         Fluttertoast.showToast(
           msg: e.message.toString(),
-          backgroundColor: const Color(0XFFA3333D),
-          textColor: Colors.white,
+          backgroundColor: Theme.of(context).highlightColor, 
+          textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
       }
