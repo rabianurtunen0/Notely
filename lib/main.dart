@@ -29,14 +29,22 @@ class LightDarkTheme extends StatefulWidget {
 
 ThemeData _lightTheme = ThemeData(
   fontFamily: 'Nunito',
-  backgroundColor: const Color(0XFF2A2B2E),
-  primaryColor: const Color(0XFFA3333D),
+  backgroundColor: const Color(0XFFEAEAEA),
+  highlightColor: const Color(0XFFA3333D),
+  textSelectionTheme: const TextSelectionThemeData(
+    selectionColor: Color(0XFF2A2B2E),
+    selectionHandleColor: Color(0XFF2A2B2E)
+  ),
 );
 
 ThemeData _darkTheme = ThemeData(
   fontFamily: 'Nunito',
-  backgroundColor: const Color.fromARGB(255, 81, 77, 72),
-  primaryColor: const Color.fromARGB(255, 29, 44, 51),
+  backgroundColor: const Color(0XFF2A2B2E),
+  highlightColor: const Color(0XFFA3333D),
+  textSelectionTheme: const TextSelectionThemeData(
+    selectionColor: Color(0XFFEAEAEA),
+    selectionHandleColor: Color(0XFFD9D9D9),
+  ),
 );
 
 bool _light = true;
