@@ -26,11 +26,11 @@ class _PasswordResetState extends State<PasswordReset> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Get.to(const Login()),
-          icon: Icon(
-            Icons.arrow_back,
+          icon: ImageIcon(
+             const AssetImage('assets/images/arrow_left.png'),
             color: Theme.of(context).highlightColor,
           ),
-          splashRadius: 20.0,
+          splashRadius: 25.0,
         ),
       ),
       body: SafeArea(
