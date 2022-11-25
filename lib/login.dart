@@ -32,11 +32,11 @@ class _LoginState extends State<Login> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Get.to(const CreateAccount()),
-          icon: Icon(
-            Icons.arrow_back,
+          icon: ImageIcon(
+             const AssetImage('assets/images/arrow_left.png'),
             color: Theme.of(context).highlightColor,
           ),
-          splashRadius: 20.0,
+          splashRadius: 25.0,
         ),
       ),
       body: SafeArea(
