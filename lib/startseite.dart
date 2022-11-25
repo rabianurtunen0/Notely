@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:notely/addnote.dart';
+import 'package:notely/notespage.dart';
+import 'package:notely/settings.dart';
 
 class StartSeite extends StatefulWidget {
   const StartSeite({Key? key}) : super(key: key);
@@ -8,6 +12,7 @@ class StartSeite extends StatefulWidget {
 }
 
 class _StartSeiteState extends State<StartSeite> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,26 +24,28 @@ class _StartSeiteState extends State<StartSeite> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const ImageIcon(
-                AssetImage('assets/images/menu.png'),
-                color: Color(0XFFFFFDFA),
+              icon: ImageIcon(
+                const AssetImage('assets/images/menu.png'),
+                color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
+              splashRadius: 25.0,
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
         ),
         title: Container(
           alignment: Alignment.center,
-          child: const Text(
-            '..........',
+          child: Text(
+            'All Notes',
             style: TextStyle(
+              fontFamily: 'Titan One',
               fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w900,
-              fontSize: 14,
-              color: Color(0XFFFFFDFA),
+              fontWeight: FontWeight.w400,
+              fontSize: 20,
+              color: Theme.of(context).textSelectionTheme.selectionColor,
             ),
           ),
         ),
@@ -46,19 +53,17 @@ class _StartSeiteState extends State<StartSeite> {
           Container(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: const ImageIcon(
-              AssetImage('assets/images/search.png'),
-              color: Color(0XFFFFFDFA),
+              icon: ImageIcon(
+                const AssetImage('assets/images/search.png'),
+                color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
-              onPressed: () {
-                
-              },
+              onPressed: () {},
             ),
           ),
         ],
       ),
       drawer: Drawer(
-        backgroundColor: const Color(0XFFA3333D),
+        backgroundColor: Theme.of(context).highlightColor,
         width: 310,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.horizontal(
@@ -204,7 +209,7 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () => Get.to(const Settings()),
                 child: Row(
                   children: const [
                     Padding(
@@ -235,17 +240,40 @@ class _StartSeiteState extends State<StartSeite> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-
+          Get.to(const AddNote());
         },
         backgroundColor: const Color(0XFFA3333D),
         elevation: 20,
-        shape: RoundedRectangleBorder( 
-          borderRadius: BorderRadius.circular(18.0)
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
         child: const ImageIcon(
           AssetImage('assets/images/plus.png'),
           color: Color(0XFFFFFDFA),
-         ),
+        ),
+      ),
+      body: const NotesPage(),
+    );
+  }
+}
+
+class showNotes extends StatelessWidget {
+  String title, note;
+
+  showNotes({
+    Key? key,
+    required this.title,
+    required this.note,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: [
+          Text(title),
+          Text(note),
+        ],
       ),
     );
   }
