@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:notely/createaccount.dart';
@@ -32,9 +33,9 @@ class _LoginState extends State<Login> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Get.to(const CreateAccount()),
-          icon: ImageIcon(
-             const AssetImage('assets/images/arrow_left.png'),
-            color: Theme.of(context).highlightColor,
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
+            color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,
         ),
@@ -56,7 +57,8 @@ class _LoginState extends State<Login> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w400,
                       fontSize: 40,
-                      color: Theme.of(context).textSelectionTheme.selectionColor, 
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -69,7 +71,8 @@ class _LoginState extends State<Login> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Theme.of(context).textSelectionTheme.selectionColor, 
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -115,11 +118,11 @@ class _LoginState extends State<Login> {
                         color: Color(0XFF595550),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -137,7 +140,8 @@ class _LoginState extends State<Login> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Theme.of(context).textSelectionTheme.selectionColor, 
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -198,11 +202,11 @@ class _LoginState extends State<Login> {
                         splashColor: Colors.transparent,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -214,14 +218,14 @@ class _LoginState extends State<Login> {
                 Container(
                   width: 340,
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.fromLTRB(0.0, 46.0, 0.0, 0.0),
+                  margin: const EdgeInsets.fromLTRB(4.0, 46.0, 4.0, 0.0),
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).highlightColor, 
+                    color: Theme.of(context).highlightColor,
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
-                      height: 54,
+                      height: 52,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -259,7 +263,8 @@ class _LoginState extends State<Login> {
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w800,
                         fontSize: 16,
-                        color: Theme.of(context).textSelectionTheme.selectionColor, 
+                        color:
+                            Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),
@@ -288,7 +293,7 @@ class _LoginState extends State<Login> {
           .catchError((e) {
         Fluttertoast.showToast(
           msg: "Sorry, you couldn't not log in. Please check your information.",
-          backgroundColor: Theme.of(context).highlightColor, 
+          backgroundColor: Theme.of(context).highlightColor,
           textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
@@ -296,3 +301,4 @@ class _LoginState extends State<Login> {
     }
   }
 }
+

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:notely/settings.dart';
-import 'package:notely/theme.dart';
+import 'package:notely/setting.dart';
 import 'package:notely/theme_service.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class AppTheme extends StatefulWidget {
   const AppTheme({Key? key}) : super(key: key);
@@ -25,9 +25,9 @@ class _AppThemeState extends State<AppTheme> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => Get.to(const Settings()),
-          icon: ImageIcon(
-            const AssetImage('assets/images/arrow_left.png'),
+          onPressed: () => Get.to(const Setting()),
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
             color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,

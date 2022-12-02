@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:notely/settings.dart';
-//import 'package:image_picker/image_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notely/setting.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -11,22 +14,73 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  final _fromKey = GlobalKey<FormState>();
-  final fullNameEditingController =
-      TextEditingController(text: 'Rabia Nur Tünen');
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  var user = FirebaseFirestore.instance
+      .collection("Users")
+      .doc(FirebaseAuth.instance.currentUser?.email)
+      .get()
+      .then((data) => data['fullname'].toString().toString());
+
+  Future<String> getUserNameFromUID(String uid) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('uid', isEqualTo: uid)
+        .get();
+    return snapshot.docs.first['fullname'].toString().trim();
+  }
+
+  late String getFullName = "";
+  var getLocation = "";
+
+  String listData = '';
+
+  List<String> list_data = [];
+
+  Future<List<dynamic>> getData() async {
+    List<dynamic> degerler = [];
+
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .get()
+        .then((value) {
+      degerler.addAll(value.data()!.values.toList());
+      listData = value.data()!.values.toList()[3];
+      getFullName = value.data()!.values.toList()[3];
+    });
+    // ignore: avoid_print, prefer_interpolation_to_compose_strings
+
+    return degerler;
+  }
+
+  Future<String> testtttt() async {
+    var asd = await getData();
+
+    List<String> temp = List<String>.from(asd);
+    print(temp);
+    getFullName = temp[3];
+    return "asd";
+  }
+
+  late final fullNameEditingController =
+      TextEditingController(text: getFullName);
   final emailEditingController =
-      TextEditingController(text: 'rrabianurtunen@gmail.com');
-  final locationEditingController =
-      TextEditingController(text: 'Konya, Turkey');
+      TextEditingController(text: FirebaseAuth.instance.currentUser?.email);
+  late final locationEditingController =
+      TextEditingController(text: getLocation);
+
   final oldPasswordEditingController = TextEditingController();
   final newPasswordEditingController = TextEditingController();
   final newPasswordAgainEditingController = TextEditingController();
 
   final _scrollController = ScrollController();
+  final _fromKey = GlobalKey<FormState>();
   bool _isVisible = true;
-
-  //PickedFile _imageFile;
-  //final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +92,9 @@ class _EditProfileState extends State<EditProfile> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          onPressed: () => Get.to(const Settings()),
-          icon: ImageIcon(
-            const AssetImage('assets/images/arrow_left.png'),
+          onPressed: () => Get.to(const Setting()),
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
             color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,
@@ -73,9 +127,16 @@ class _EditProfileState extends State<EditProfile> {
                     Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 12.0),
-                      child: const CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/people.png'),
+                      child: CircleAvatar(
+                        backgroundColor: Theme.of(context).highlightColor,
                         radius: 75.0,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            'assets/images/user.svg',
+                            color: const Color(0XFFFFFDFA),
+                          ),
+                        ),
                       ),
                     ),
                     Container(
@@ -102,7 +163,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 45.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 45.0, 0.0, 8.0),
                       child: Text(
                         'Full Name',
                         style: TextStyle(
@@ -117,7 +178,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: fullNameEditingController,
@@ -147,12 +208,12 @@ class _EditProfileState extends State<EditProfile> {
                               const EdgeInsets.fromLTRB(10.0, 13.0, 10.0, 13.0),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -164,7 +225,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 27.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 27.0, 0.0, 8.0),
                       child: Text(
                         'Email Address',
                         style: TextStyle(
@@ -179,7 +240,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: emailEditingController,
@@ -214,12 +275,12 @@ class _EditProfileState extends State<EditProfile> {
                               const EdgeInsets.fromLTRB(10.0, 13.0, 10.0, 13.0),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -231,7 +292,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 27.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 27.0, 0.0, 8.0),
                       child: Text(
                         'Location',
                         style: TextStyle(
@@ -246,7 +307,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: locationEditingController,
@@ -270,12 +331,12 @@ class _EditProfileState extends State<EditProfile> {
                               const EdgeInsets.fromLTRB(10.0, 13.0, 10.0, 13.0),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -303,7 +364,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 0.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 0.0, 0.0, 8.0),
                       child: Text(
                         'Old Password',
                         style: TextStyle(
@@ -318,7 +379,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: oldPasswordEditingController,
@@ -375,12 +436,12 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -392,7 +453,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 27.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 27.0, 0.0, 8.0),
                       child: Text(
                         'New Password',
                         style: TextStyle(
@@ -407,7 +468,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: newPasswordEditingController,
@@ -464,12 +525,12 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -481,7 +542,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.fromLTRB(31.0, 27.0, 0.0, 8.0),
+                      margin: const EdgeInsets.fromLTRB(37.0, 27.0, 0.0, 8.0),
                       child: Text(
                         'New Password Again',
                         style: TextStyle(
@@ -496,7 +557,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
                       child: TextFormField(
                         autofocus: false,
                         controller: newPasswordAgainEditingController,
@@ -553,12 +614,12 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide:
-                                const BorderSide(color: Color(0XFFF2E5D5)),
+                                const BorderSide(color: Color(0XFFFFFDFA)),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           border: const OutlineInputBorder(
@@ -569,16 +630,16 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                     Container(
-                      width: 340,
+                      width: MediaQuery.of(context).size.width,
                       alignment: Alignment.center,
-                      margin: const EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 90.0),
+                      margin: const EdgeInsets.fromLTRB(36.0, 45.0, 36.0, 90.0),
                       child: Material(
                         elevation: 0,
                         borderRadius: BorderRadius.circular(12.0),
                         color: Theme.of(context).highlightColor,
                         child: MaterialButton(
                           minWidth: MediaQuery.of(context).size.width,
-                          height: 54,
+                          height: 52,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
@@ -609,7 +670,7 @@ class _EditProfileState extends State<EditProfile> {
   bottomSheet() {
     Get.bottomSheet(
       Container(
-          height: 120.0,
+          height: 150.0,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(
@@ -630,9 +691,9 @@ class _EditProfileState extends State<EditProfile> {
                     Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/camera.png'),
-                        color: Color(0XFFFFFDFA),
+                      child: SvgPicture.asset(
+                        'assets/images/camera.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
@@ -660,9 +721,9 @@ class _EditProfileState extends State<EditProfile> {
                     Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/image.png'),
-                        color: Color(0XFFFFFDFA),
+                      child: SvgPicture.asset(
+                        'assets/images/image.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
@@ -694,4 +755,5 @@ class _EditProfileState extends State<EditProfile> {
   //     _imageFile = PickedFile!;
   //   });
   // }
+
 }

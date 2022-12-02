@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notely/apptheme.dart';
 import 'package:notely/editprofile.dart';
 import 'package:notely/logout.dart';
 import 'package:notely/startseite.dart';
 import 'package:get/get.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+class Setting extends StatefulWidget {
+  const Setting({Key? key}) : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Setting> createState() => _SettingState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingState extends State<Setting> {
   final _fromKey = GlobalKey<FormState>();
 
   @override
@@ -26,8 +27,8 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.to(const StartSeite()),
-          icon: ImageIcon(
-            const AssetImage('assets/images/arrow_left.png'),
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
             color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,
@@ -53,10 +54,17 @@ class _SettingsState extends State<Settings> {
                 Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 20.0),
-                  child: const CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/people.png'),
-                    radius: 75.0,
-                  ),
+                  child: CircleAvatar(
+                        backgroundColor: Theme.of(context).highlightColor,
+                        radius: 75.0,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            'assets/images/user.svg',
+                            color: const Color(0XFFFFFDFA),
+                          ),
+                        ),
+                      ),
                 ),
                 Container(
                   alignment: Alignment.center,
@@ -95,14 +103,14 @@ class _SettingsState extends State<Settings> {
                       contentPadding:
                           const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
                       leading: Container(
+                        padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: const Color(0XFFFFFDFA),
                         ),
-                        child: ImageIcon(
-                          const AssetImage('assets/images/editprofile.png'),
+                        child: SvgPicture.asset(
+                          'assets/images/edit_profile.svg',
                           color: Theme.of(context).highlightColor,
-                          size: 32.0,
                         ),
                       ),
                       title: Text(
@@ -116,10 +124,9 @@ class _SettingsState extends State<Settings> {
                               .selectionColor,
                         ),
                       ),
-                      trailing: ImageIcon(
-                        const AssetImage('assets/images/arrow_right.png'),
-                        color:
-                            Theme.of(context).textSelectionTheme.selectionColor,
+                      trailing: SvgPicture.asset(
+                        'assets/images/arrow_right.svg',
+                        color: Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),
@@ -133,14 +140,15 @@ class _SettingsState extends State<Settings> {
                       contentPadding:
                           const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
                       leading: Container(
+                        padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: const Color(0XFFFFFDFA),
                         ),
-                        child: ImageIcon(
-                          const AssetImage('assets/images/apptheme.png'),
+                        child: SvgPicture.asset(
+                          'assets/images/app_theme.svg',
                           color: Theme.of(context).highlightColor,
-                          size: 32.0,
+                          
                         ),
                       ),
                       title: Text(
@@ -154,10 +162,9 @@ class _SettingsState extends State<Settings> {
                               .selectionColor,
                         ),
                       ),
-                      trailing: ImageIcon(
-                        const AssetImage('assets/images/arrow_right.png'),
-                        color:
-                            Theme.of(context).textSelectionTheme.selectionColor,
+                      trailing: SvgPicture.asset(
+                        'assets/images/arrow_right.svg',
+                        color: Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),
@@ -170,14 +177,15 @@ class _SettingsState extends State<Settings> {
                     child: ListTile(
                       contentPadding: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
                       leading: Container(
+                        padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: const Color(0XFFFFFDFA),
                         ),
-                        child: ImageIcon(
-                          const AssetImage('assets/images/logout.png'),
+                        child: SvgPicture.asset(
+                          'assets/images/log_out.svg',
                           color: Theme.of(context).highlightColor,
-                          size: 32.0,
+                          
                         ),
                       ),
                       title: Text(
@@ -191,10 +199,9 @@ class _SettingsState extends State<Settings> {
                               .selectionColor,
                         ),
                       ),
-                      trailing: ImageIcon(
-                        const AssetImage('assets/images/arrow_right.png'),
-                        color:
-                            Theme.of(context).textSelectionTheme.selectionColor,
+                      trailing: SvgPicture.asset(
+                        'assets/images/arrow_right.svg',
+                        color: Theme.of(context).textSelectionTheme.selectionColor,
                       ),
                     ),
                   ),

@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:notely/startseite.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AddNote extends StatefulWidget {
   const AddNote({Key? key}) : super(key: key);
@@ -10,6 +13,9 @@ class AddNote extends StatefulWidget {
 }
 
 class _AddNoteState extends State<AddNote> {
+  final titleEditingController = TextEditingController();
+  final noteEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +25,13 @@ class _AddNoteState extends State<AddNote> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Get.to(const StartSeite()),
-          icon: ImageIcon(
-            const AssetImage('assets/images/arrow_left.png'),
-            color: Theme.of(context).highlightColor,
+          onPressed: () {
+            Get.to(const StartSeite());
+            createNotes();
+          },
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
+            color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,
         ),
@@ -43,13 +52,14 @@ class _AddNoteState extends State<AddNote> {
           Container(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: ImageIcon(
-                const AssetImage('assets/images/more.png'),
-                color: Theme.of(context).textSelectionTheme.selectionColor,
-              ),
               onPressed: () {
                 bottomSheet();
               },
+              icon: SvgPicture.asset(
+                'assets/images/more.svg',
+                color: Theme.of(context).textSelectionTheme.selectionColor,
+              ),
+              splashRadius: 25.0,
             ),
           ),
         ],
@@ -58,10 +68,11 @@ class _AddNoteState extends State<AddNote> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
               width: MediaQuery.of(context).size.width,
               height: 75,
               child: TextField(
+                controller: titleEditingController,
                 maxLines: 1,
                 cursorColor:
                     Theme.of(context).textSelectionTheme.selectionColor,
@@ -75,7 +86,7 @@ class _AddNoteState extends State<AddNote> {
                   hintText: "Title..",
                   hintStyle: TextStyle(
                     fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontSize: 24,
                     color: Theme.of(context).textSelectionTheme.selectionColor,
                     letterSpacing: 1,
@@ -84,9 +95,11 @@ class _AddNoteState extends State<AddNote> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 0.0),
+              padding: const EdgeInsets.fromLTRB(26.0, 0.0, 26.0, 0.0),
               width: MediaQuery.of(context).size.width,
               child: TextField(
+                controller: noteEditingController,
+                onEditingComplete: () => createNotes(),
                 maxLines: 24,
                 cursorColor:
                     Theme.of(context).textSelectionTheme.selectionColor,
@@ -118,7 +131,7 @@ class _AddNoteState extends State<AddNote> {
   bottomSheet() {
     Get.bottomSheet(
       Container(
-          height: 300.0,
+          height: 330.0,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(
@@ -127,26 +140,31 @@ class _AddNoteState extends State<AddNote> {
           ),
           child: Column(
             children: [
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 12.0),
+                child: SvgPicture.asset(
+                  'assets/images/line.svg',
+                  color: const Color(0XFFFFFDFA),
+                ),
+              ),
               MaterialButton(
-                height: 60.0,
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {
-                
-                },
+                onPressed: () {},
                 child: Row(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(8.0, 16.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/file_delete.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(8.0, 26.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/delete_note.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(16.0, 18.0, 0.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 28.0, 0.0, 0.0),
                       child: const Text(
                         'Delete note',
                         style: TextStyle(
@@ -161,22 +179,22 @@ class _AddNoteState extends State<AddNote> {
                 ),
               ),
               MaterialButton(
-                height: 60.0,
+                highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onPressed: () {},
                 child: Row(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/copy.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(8.0, 26.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/copy.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
-                      alignment: Alignment.bottomLeft,
-                      padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 0.0),
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.fromLTRB(16.0, 28.0, 0.0, 0.0),
                       child: const Text(
                         'Make a copy',
                         style: TextStyle(
@@ -191,25 +209,22 @@ class _AddNoteState extends State<AddNote> {
                 ),
               ),
               MaterialButton(
-                height: 60.0,
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {
-                
-                },
+                onPressed: () {},
                 child: Row(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/share.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(8.0, 26.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/share.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 28.0, 0.0, 0.0),
                       child: const Text(
                         'Share',
                         style: TextStyle(
@@ -224,25 +239,22 @@ class _AddNoteState extends State<AddNote> {
                 ),
               ),
               MaterialButton(
-                height: 60.0,
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {
-                
-                },
+                onPressed: () {},
                 child: Row(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/label.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(8.0, 26.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/label.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 28.0, 0.0, 0.0),
                       child: const Text(
                         'Labels',
                         style: TextStyle(
@@ -257,25 +269,22 @@ class _AddNoteState extends State<AddNote> {
                 ),
               ),
               MaterialButton(
-                height: 60.0,
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {
-                
-                },
+                onPressed: () {},
                 child: Row(
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
-                      child: const ImageIcon(
-                        AssetImage('assets/images/archive.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(8.0, 26.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/archive.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.fromLTRB(16.0, 2.0, 0.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 28.0, 0.0, 0.0),
                       child: const Text(
                         'Archive',
                         style: TextStyle(
@@ -292,5 +301,21 @@ class _AddNoteState extends State<AddNote> {
             ],
           )),
     );
+  }
+
+  void createNotes() async {
+    if (titleEditingController.text.isNotEmpty ||
+        noteEditingController.text.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser?.email)
+          .collection('Notes')
+          .doc()
+          .set({
+        'title': titleEditingController.text,
+        'note': noteEditingController.text,
+        'date': DateTime.now(),
+      });
+    }
   }
 }

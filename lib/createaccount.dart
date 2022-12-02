@@ -133,11 +133,11 @@ class _CreateAccountState extends State<CreateAccount> {
                         color: Color(0XFF595550),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -202,11 +202,11 @@ class _CreateAccountState extends State<CreateAccount> {
                         color: Color(0XFF595550),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -286,11 +286,11 @@ class _CreateAccountState extends State<CreateAccount> {
                         splashColor: Colors.transparent,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -302,14 +302,14 @@ class _CreateAccountState extends State<CreateAccount> {
                 Container(
                   width: 340,
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.fromLTRB(0.0, 46.0, 0.0, 0.0),
+                  margin: const EdgeInsets.fromLTRB(4.0, 46.0, 4.0, 0.0),
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
                     color: Theme.of(context).highlightColor,
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
-                      height: 54,
+                      height: 52,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -370,6 +370,8 @@ class _CreateAccountState extends State<CreateAccount> {
                   'fullname': fullNameEditingController.text,
                   'email': email,
                   'password': password,
+                  'profilepicture': null,
+                  'location': null, 
                 }),
                 Fluttertoast.showToast(
                   msg: "Account created succesfully :) ",

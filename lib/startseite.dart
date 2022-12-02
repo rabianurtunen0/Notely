@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:notely/addnote.dart';
-import 'package:notely/notespage.dart';
-import 'package:notely/settings.dart';
+import 'package:notely/archive.dart';
+import 'package:notely/labels.dart';
+import 'package:notely/notes.dart';
+import 'package:notely/notespage_grid.dart';
+import 'package:notely/notespage_list.dart';
+import 'package:notely/setting.dart';
+import 'package:notely/trash.dart';
 
 class StartSeite extends StatefulWidget {
   const StartSeite({Key? key}) : super(key: key);
@@ -12,6 +18,10 @@ class StartSeite extends StatefulWidget {
 }
 
 class _StartSeiteState extends State<StartSeite> {
+  final searchEditingController = TextEditingController();
+  final _scrollController = ScrollController();
+
+  bool changeView = true;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +34,8 @@ class _StartSeiteState extends State<StartSeite> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: ImageIcon(
-                const AssetImage('assets/images/menu.png'),
+              icon: SvgPicture.asset(
+                'assets/images/menu.svg',
                 color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
               onPressed: () {
@@ -53,11 +63,17 @@ class _StartSeiteState extends State<StartSeite> {
           Container(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: ImageIcon(
-                const AssetImage('assets/images/search.png'),
+              icon: SvgPicture.asset(
+                changeView
+                    ? 'assets/images/category.svg'
+                    : 'assets/images/frame.svg',
                 color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  changeView = !changeView;
+                });
+              },
             ),
           ),
         ],
@@ -89,17 +105,17 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () => Get.to(const Notes()),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
-                      child: ImageIcon(
-                        AssetImage('assets/images/file.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/notes.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
                       child: Text(
                         'Notes',
@@ -119,17 +135,17 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () => Get.to(const Labels()),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
-                      child: ImageIcon(
-                        AssetImage('assets/images/label.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/label.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
                       child: Text(
                         'Labels',
@@ -149,17 +165,17 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () => Get.to(const Trash()),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
-                      child: ImageIcon(
-                        AssetImage('assets/images/trash.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/trash.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
                       child: Text(
                         'Trash',
@@ -179,17 +195,17 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () => Get.to(const Archive()),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
-                      child: ImageIcon(
-                        AssetImage('assets/images/archive.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/archive.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
                       child: Text(
                         'Archive',
@@ -209,17 +225,17 @@ class _StartSeiteState extends State<StartSeite> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
               child: MaterialButton(
-                onPressed: () => Get.to(const Settings()),
+                onPressed: () => Get.to(const Setting()),
                 child: Row(
-                  children: const [
+                  children: [
                     Padding(
-                      padding: EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
-                      child: ImageIcon(
-                        AssetImage('assets/images/settings.png'),
-                        color: Color(0XFFFFFDFA),
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/settings.svg',
+                        color: const Color(0XFFFFFDFA),
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
                       child: Text(
                         'Settings',
@@ -246,34 +262,26 @@ class _StartSeiteState extends State<StartSeite> {
         elevation: 20,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
-        child: const ImageIcon(
-          AssetImage('assets/images/plus.png'),
-          color: Color(0XFFFFFDFA),
+        child: SvgPicture.asset(
+          'assets/images/plus.svg',
+          color: const Color(0XFFFFFDFA),
         ),
       ),
-      body: const NotesPage(),
-    );
-  }
-}
-
-class showNotes extends StatelessWidget {
-  String title, note;
-
-  showNotes({
-    Key? key,
-    required this.title,
-    required this.note,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      child: Column(
-        children: [
-          Text(title),
-          Text(note),
-        ],
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+        child: Scrollbar(
+          controller: _scrollController,
+          thickness: 5,
+          radius: const Radius.circular(20.0),
+          scrollbarOrientation: ScrollbarOrientation.right,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+              child: changeView ? const NotesPageGrid() : const NotesPageList(),
+            ),
+          ),
+        ),
       ),
     );
   }

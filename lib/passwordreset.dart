@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:notely/login.dart';
@@ -26,9 +27,9 @@ class _PasswordResetState extends State<PasswordReset> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Get.to(const Login()),
-          icon: ImageIcon(
-             const AssetImage('assets/images/arrow_left.png'),
-            color: Theme.of(context).highlightColor,
+          icon: SvgPicture.asset(
+            'assets/images/arrow_left.svg',
+            color: Theme.of(context).textSelectionTheme.selectionColor,
           ),
           splashRadius: 25.0,
         ),
@@ -109,11 +110,11 @@ class _PasswordResetState extends State<PasswordReset> {
                         color: Color(0XFF595550),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFF2E5D5)),
+                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       border: const OutlineInputBorder(
@@ -123,16 +124,16 @@ class _PasswordResetState extends State<PasswordReset> {
                   ),
                 ),
                 Container(
-                  width: 340,
+                  width: MediaQuery.of(context).size.width,
                   alignment: Alignment.center,
-                  margin: const EdgeInsets.fromLTRB(0.0, 46, 0.0, 0.0),
+                  margin: const EdgeInsets.fromLTRB(4.0, 46, 4.0, 0.0),
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
                     color: Theme.of(context).highlightColor,
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
-                      height: 54,
+                      height: 52,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
