@@ -1,9 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:notely/setting.dart';
 import 'package:notely/theme_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+enum Sky { sun, moon }
+
+Map<Sky, Color> skyColors = <Sky, Color>{
+  Sky.sun: const Color(0XFFFFC841),
+  Sky.moon: const Color(0XFF2A2B2E),
+};
 
 class AppTheme extends StatefulWidget {
   const AppTheme({Key? key}) : super(key: key);
@@ -14,6 +22,8 @@ class AppTheme extends StatefulWidget {
 
 class _AppThemeState extends State<AppTheme> {
   final _fromKey = GlobalKey<FormState>();
+  final getStorage = GetStorage();
+  bool changeStorage = GetStorage().read("changeColor");
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +43,7 @@ class _AppThemeState extends State<AppTheme> {
           splashRadius: 25.0,
         ),
         title: Text(
-          'App Theme',
+          'Change Theme',
           style: TextStyle(
             fontFamily: 'Titan One',
             fontStyle: FontStyle.normal,
@@ -44,133 +54,141 @@ class _AppThemeState extends State<AppTheme> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 16.0),
-          child: Form(
-            key: _fromKey,
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(0.0, 32.0, 0.0, 32.0),
-                  child: CircleAvatar(
-                    backgroundImage: Theme.of(context).backgroundColor == const Color(0XFFEAEAEA)
-                        ? const AssetImage('assets/images/sun.png')
-                        : const AssetImage('assets/images/moon.png'),
-                    backgroundColor: Colors.transparent,
-                    radius: 75.0,
+        child: Form(
+          key: _fromKey,
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(top: 72.0),
+                child: Text(
+                  'Select white or dark theme',
+                  style: TextStyle(
+                    color: Theme.of(context).textSelectionTheme.selectionColor,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
                   ),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(0.0, 6.0, 0.0, 6.0),
-                  child: Text(
-                    'Choose a style',
-                    style: TextStyle(
-                      color:
-                          Theme.of(context).textSelectionTheme.selectionColor,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 36.0),
+                width: 150,
+                alignment: Alignment.center,
+                child: CupertinoSlidingSegmentedControl<Sky>(
+                  backgroundColor: CupertinoColors.systemGrey,
+                  thumbColor: skyColors[Theme.of(context).backgroundColor ==
+                          const Color(0XFFEAEAEA)
+                      ? Sky.sun
+                      : Sky.moon]!,
+                  groupValue: Theme.of(context).backgroundColor ==
+                          const Color(0XFFEAEAEA)
+                      ? Sky.sun
+                      : Sky.moon,
+                  onValueChanged: (Sky? value) {
+                    if (value != null) {
+                      setState(() {
+                        ThemeService().changeThemeMode();
+                      });
+                    }
+                  },
+                  children: <Sky, Widget>{
+                    Sky.sun: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SvgPicture.asset(
+                        'assets/images/sun.svg',
+                        color: Theme.of(context).backgroundColor ==
+                                const Color(0XFFEAEAEA)
+                            ? Colors.white
+                            : Colors.transparent,
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Day or night. Light or dark. Customize your interface',
-                    style: TextStyle(
-                      color: Theme.of(context)
-                          .textSelectionTheme
-                          .selectionHandleColor,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
+                    Sky.moon: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SvgPicture.asset(
+                        'assets/images/moon.svg',
+                        color: Theme.of(context).backgroundColor ==
+                                const Color(0XFFEAEAEA)
+                            ? Colors.transparent
+                            : Colors.white,
+                      ),
                     ),
+                  },
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 36.0),
+                child: Text(
+                  'Select color palette',
+                  style: TextStyle(
+                    color: Theme.of(context).textSelectionTheme.selectionColor,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(96.0, 32.0, 96.0, 32.0),
-                  alignment: Alignment.center,
-                  child: Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    margin: const EdgeInsets.only(right: 6.0),
+                    child: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(16.0),
+                      color: const Color(0XFF613DC1),
+                      child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        onPressed: () {
                           setState(() {
-                            ThemeService().changeThemeMode();
+                            getStorage.write("changeColor", false);
+                            changeStorage = false;
                           });
                         },
-                        child: Container(
-                          height: 40,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.0),
-                            color: Theme.of(context)
-                                .textSelectionTheme
-                                .selectionColor,
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.fromLTRB(
-                                    28.0, 0.0, 38.0, 0.0),
-                                child: const Text(
-                                  'Light',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(),
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.fromLTRB(
-                                    42.0, 0.0, 22.0, 0.0),
-                                child: const Text(
-                                  'Dark',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(),
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: SvgPicture.asset(
+                          'assets/images/check.svg',
+                          color: changeStorage
+                              ? Colors.transparent
+                              : const Color(0XFFFFFDFA),
                         ),
                       ),
-                      AnimatedAlign(
-                        alignment: Theme.of(context).backgroundColor == const Color(0XFFEAEAEA)
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.fastOutSlowIn,
-                        child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.all(5.0),
-                            width: 80,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).backgroundColor,
-                              borderRadius: BorderRadius.circular(24.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context).shadowColor,
-                                  blurRadius: 12.0,
-                                  spreadRadius: 3.0,
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              Theme.of(context).backgroundColor == const Color(0XFFEAEAEA) ? 'Light' : 'Dark',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textSelectionTheme
-                                    .selectionColor,
-                              ),
-                            )),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  Container(
+                    width: 60,
+                    height: 60,
+                    margin: const EdgeInsets.only(left: 6.0),
+                    child: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(16.0),
+                      color: const Color(0XFFA3333D),
+                      child: MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            getStorage.write("changeColor", true);
+                            changeStorage = true;
+                          });
+                        },
+                        child: SvgPicture.asset(
+                          'assets/images/check.svg',
+                          color: changeStorage
+                              ? const Color(0XFFFFFDFA)
+                              : Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
