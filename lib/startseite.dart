@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:notely/addnote.dart';
 import 'package:notely/archive.dart';
 import 'package:notely/labels.dart';
@@ -20,8 +21,15 @@ class StartSeite extends StatefulWidget {
 class _StartSeiteState extends State<StartSeite> {
   final searchEditingController = TextEditingController();
   final _scrollController = ScrollController();
+  final getStorage = GetStorage();
 
-  bool changeView = true;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      getStorage.write("changeView", true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +72,16 @@ class _StartSeiteState extends State<StartSeite> {
             alignment: Alignment.centerRight,
             child: IconButton(
               icon: SvgPicture.asset(
-                changeView
+                getStorage.read("changeView")
                     ? 'assets/images/category.svg'
                     : 'assets/images/frame.svg',
                 color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
               onPressed: () {
                 setState(() {
-                  changeView = !changeView;
+                  getStorage.read("changeView")
+                      ? getStorage.write("changeView", false)
+                      : getStorage.write("changeView", true);
                 });
               },
             ),
@@ -79,7 +89,9 @@ class _StartSeiteState extends State<StartSeite> {
         ],
       ),
       drawer: Drawer(
-        backgroundColor: Theme.of(context).highlightColor,
+        backgroundColor: getStorage.read("changeColor")
+            ? const Color(0XFFA3333D)
+            : const Color(0XFF613DC1),
         width: 310,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.horizontal(
@@ -258,7 +270,9 @@ class _StartSeiteState extends State<StartSeite> {
         onPressed: () {
           Get.to(const AddNote());
         },
-        backgroundColor: const Color(0XFFA3333D),
+        backgroundColor: getStorage.read("changeColor")
+            ? const Color(0XFFA3333D)
+            : const Color(0XFF613DC1),
         elevation: 20,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
@@ -278,7 +292,9 @@ class _StartSeiteState extends State<StartSeite> {
             controller: _scrollController,
             child: Container(
               margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-              child: changeView ? const NotesPageGrid() : const NotesPageList(),
+              child: getStorage.read("changeView")
+                  ? const NotesPageGrid()
+                  : const NotesPageList(),
             ),
           ),
         ),
