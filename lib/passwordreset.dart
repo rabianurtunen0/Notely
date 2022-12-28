@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:notely/login.dart';
 
 class PasswordReset extends StatefulWidget {
@@ -16,6 +17,8 @@ class _PasswordResetState extends State<PasswordReset> {
   final emailEditingController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _fromKey = GlobalKey<FormState>();
+  final getStorage = GetStorage();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,8 @@ class _PasswordResetState extends State<PasswordReset> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w400,
                       fontSize: 40,
-                      color: Theme.of(context).textSelectionTheme.selectionColor,
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
@@ -64,16 +68,19 @@ class _PasswordResetState extends State<PasswordReset> {
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
-                      color: Theme.of(context).textSelectionTheme.selectionColor,
+                      color:
+                          Theme.of(context).textSelectionTheme.selectionColor,
                     ),
                   ),
                 ),
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: emailEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "⛔ This field is required";
@@ -130,7 +137,9 @@ class _PasswordResetState extends State<PasswordReset> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).highlightColor,
+                    color: getStorage.read("changeColor")
+                        ? const Color(0XFFA3333D)
+                        : const Color(0XFF613DC1),
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 52,
@@ -138,9 +147,22 @@ class _PasswordResetState extends State<PasswordReset> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       onPressed: () {
-                        resetPassword();
+                        setState(() {
+                          resetPassword();
+                          loading = true;
+                        });
+                        Future.delayed(const Duration(seconds: 1), () {
+                          setState(() {
+                            loading = false;
+                          });
+                        });
                       },
-                      child: const Text(
+                      child: loading
+                        ? const CircularProgressIndicator(
+                            color: Color(0XFFFFFDFA),
+                            strokeWidth: 2.0,
+                          )
+                        : const Text(
                         'Send Reset Link',
                         style: TextStyle(
                           fontStyle: FontStyle.normal,
@@ -166,14 +188,16 @@ class _PasswordResetState extends State<PasswordReset> {
                           Theme.of(context).backgroundColor),
                     ),
                     child: Text(
-                      'Login',
-                      style: TextStyle(
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        color: Theme.of(context).textSelectionTheme.selectionColor,
-                      ),
-                    ),
+                            'Login',
+                            style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                              color: Theme.of(context)
+                                  .textSelectionTheme
+                                  .selectionColor,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -192,7 +216,9 @@ class _PasswordResetState extends State<PasswordReset> {
         Fluttertoast.showToast(
           msg: "Password reset email sent",
           // ignore: use_build_context_synchronously
-          backgroundColor: Theme.of(context).highlightColor, 
+          backgroundColor: getStorage.read("changeColor")
+              ? const Color(0XFFA3333D)
+              : const Color(0XFF613DC1),
           textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );
@@ -200,7 +226,9 @@ class _PasswordResetState extends State<PasswordReset> {
       } on FirebaseAuthException catch (e) {
         Fluttertoast.showToast(
           msg: e.message.toString(),
-          backgroundColor: Theme.of(context).highlightColor, 
+          backgroundColor: getStorage.read("changeColor")
+              ? const Color(0XFFA3333D)
+              : const Color(0XFF613DC1),
           textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );

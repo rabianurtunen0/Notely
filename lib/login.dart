@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:notely/createaccount.dart';
 import 'package:notely/passwordreset.dart';
 import 'package:notely/startseite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -20,7 +22,9 @@ class _LoginState extends State<Login> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _fromKey = GlobalKey<FormState>();
+  final getStorage = GetStorage();
 
+  bool loading = false;
   bool _isVisible = true;
 
   @override
@@ -79,9 +83,11 @@ class _LoginState extends State<Login> {
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: emailEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "⛔ This field is required";
@@ -148,9 +154,11 @@ class _LoginState extends State<Login> {
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: passwordEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     obscureText: _isVisible,
                     obscuringCharacter: '#',
                     validator: (value) {
@@ -222,7 +230,9 @@ class _LoginState extends State<Login> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).highlightColor,
+                    color: getStorage.read("changeColor")
+                        ? const Color(0XFFA3333D)
+                        : const Color(0XFF613DC1),
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 52,
@@ -230,19 +240,32 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       onPressed: () {
-                        login(emailEditingController.text,
-                            passwordEditingController.text);
+                        setState(() {
+                          login(emailEditingController.text,
+                              passwordEditingController.text);
+                          loading = true;
+                        });
+                        Future.delayed(const Duration(seconds: 1), () {
+                          setState(() {
+                            loading = false;
+                          });
+                        });
                       },
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20,
-                          color: Color(0XFFFFFDFA),
-                          letterSpacing: 1.5,
-                        ),
-                      ),
+                      child: loading
+                          ? const CircularProgressIndicator(
+                              color: Color(0XFFFFFDFA),
+                              strokeWidth: 2.0,
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 20,
+                                color: Color(0XFFFFFDFA),
+                                letterSpacing: 1.5,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -279,21 +302,29 @@ class _LoginState extends State<Login> {
 
   void login(String email, String password) async {
     if (_fromKey.currentState!.validate()) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove("email");
+      prefs.setString("email", email);
+      loading = true;
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((email) async => {
                 Fluttertoast.showToast(
                   msg: "Login succesfully :) ",
-                  backgroundColor: Theme.of(context).highlightColor,
+                  backgroundColor: getStorage.read("changeColor")
+                      ? const Color(0XFFA3333D)
+                      : const Color(0XFF613DC1),
                   textColor: const Color(0XFFFFFDFA),
                   fontSize: 14.0,
                 ),
-                Get.to(const StartSeite())
+                Get.to(const StartSeite()),
               })
           .catchError((e) {
         Fluttertoast.showToast(
           msg: "Sorry, you couldn't not log in. Please check your information.",
-          backgroundColor: Theme.of(context).highlightColor,
+          backgroundColor: getStorage.read("changeColor")
+              ? const Color(0XFFA3333D)
+              : const Color(0XFF613DC1),
           textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );

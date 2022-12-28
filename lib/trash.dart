@@ -1,7 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:notely/startseite.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:notely/archive.dart';
+import 'package:notely/setting.dart';
+import 'package:notely/startseite.dart';
+import 'package:notely/trashpage_grid.dart';
+import 'package:notely/trashpage_list.dart';
 
 class Trash extends StatefulWidget {
   const Trash({Key? key}) : super(key: key);
@@ -11,7 +18,44 @@ class Trash extends StatefulWidget {
 }
 
 class _TrashState extends State<Trash> {
-  final _fromKey = GlobalKey<FormState>();
+  final searchEditingController = TextEditingController();
+  final _scrollController = ScrollController();
+  final getStorage = GetStorage();
+  static bool selected = true;
+  static bool search = false;
+
+  @override
+  void initState() {
+    getNotes();
+    getStorage.read("isSelected");
+    print(getStorage.read("isSelected"));
+    print(selected);
+    print(getStorage.listen(
+      () {
+        print(getStorage.read("isSelected"));
+      },
+    ));
+    super.initState();
+  }
+
+  void getNotes() async {
+    var collection = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Trash");
+    var querySnapshot = await collection.get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> data = querySnapshot.docs;
+    var notes = data;
+    setState(() {
+      if (notes.isEmpty) {
+        getStorage.write("trash", "false");
+      } else {
+        getStorage.write("trash", "true");
+      }
+      print(notes);
+      print(getStorage.read("trash"));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +66,20 @@ class _TrashState extends State<Trash> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Get.to(const StartSeite()),
-          icon: SvgPicture.asset(
-            'assets/images/arrow_left.svg',
-            color: Theme.of(context).textSelectionTheme.selectionColor,
-          ),
-          splashRadius: 25.0,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: SvgPicture.asset(
+                'assets/images/menu.svg',
+                color: Theme.of(context).textSelectionTheme.selectionColor,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              splashRadius: 25.0,
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
         ),
         title: Text(
           'Trash',
@@ -45,26 +96,238 @@ class _TrashState extends State<Trash> {
             alignment: Alignment.centerRight,
             child: IconButton(
               icon: SvgPicture.asset(
-                'assets/images/search.svg',
+                'assets/images/search2.svg',
                 color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
               onPressed: () {
+                
+              },
+            ),
+          ),
+          Container(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: SvgPicture.asset(
+                getStorage.read("changeView") == 'true'
+                    ? 'assets/images/category.svg'
+                    : 'assets/images/frame.svg',
+                color: Theme.of(context).textSelectionTheme.selectionColor,
+              ),
+              splashRadius: 25.0,
+              onPressed: () {
+                setState(() {
+                  getStorage.read("changeView") == 'true'
+                      ? getStorage.write("changeView", "false")
+                      : getStorage.write("changeView", "true");
+                });
               },
             ),
           ),
         ],
 
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 16.0),
-          child: Form(
-            key: _fromKey,
-            child: Column( 
-              children: [
-
-              ],
+      drawer: Drawer(
+        backgroundColor: getStorage.read("changeColor")
+            ? const Color(0XFFA3333D)
+            : const Color(0XFF613DC1),
+        width: 310,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(
+              left: Radius.zero, right: Radius.circular(32.0)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(36.0, 54.0, 0.0, 27.0),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'NOTELY',
+                style: TextStyle(
+                  fontFamily: 'Titan One',
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                  color: Color(0XFFFFFDFA),
+                ),
+              ),
             ),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              child: MaterialButton(
+                onPressed: () => Get.to(const StartSeite()),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/notes.svg',
+                        color: const Color(0XFFFFFDFA),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        'Notes',
+                        style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0XFFFFFDFA),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            /*Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              child: MaterialButton(
+                onPressed: () => Get.to(const Labels()),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/label.svg',
+                        color: const Color(0XFFFFFDFA),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        'Labels',
+                        style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0XFFFFFDFA),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),*/
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              child: MaterialButton(
+                onPressed: () => Get.to(const Trash()),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/trash.svg',
+                        color: const Color(0XFFFFFDFA),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        'Trash',
+                        style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0XFFFFFDFA),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              child: MaterialButton(
+                onPressed: () => Get.to(const Archive()),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/archive.svg',
+                        color: const Color(0XFFFFFDFA),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        'Archive',
+                        style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0XFFFFFDFA),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+              child: MaterialButton(
+                onPressed: () => Get.to(const Setting()),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18.0, 0.0, 0.0, 0.0),
+                      child: SvgPicture.asset(
+                        'assets/images/settings.svg',
+                        color: const Color(0XFFFFFDFA),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(9.0, 0.0, 0.0, 0.0),
+                      child: Text(
+                        'Settings',
+                        style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0XFFFFFDFA),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+        child: Scrollbar(
+          controller: _scrollController,
+          thickness: 5,
+          radius: const Radius.circular(20.0),
+          scrollbarOrientation: ScrollbarOrientation.right,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Container(
+                margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                child: getStorage.read("trash") == 'true'
+                    ? getStorage.read("changeView") == 'true'
+                        ? const TrashPageGrid()
+                        : const TrashPageList()
+                    : Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 35.0, horizontal: 10.0),
+                        alignment: Alignment.center,
+                        transformAlignment: Alignment.center,
+                        child: SvgPicture.asset(getStorage.read("changeColor")
+                            ? 'assets/images/trash_picture1.svg'
+                            : "assets/images/trash_picture2.svg"),
+                      )),
           ),
         ),
       ),

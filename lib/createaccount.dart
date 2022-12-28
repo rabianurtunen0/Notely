@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:notely/login.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -20,7 +21,9 @@ class _CreateAccountState extends State<CreateAccount> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _fromKey = GlobalKey<FormState>();
+  final getStorage = GetStorage();
 
+  bool loading = false;
   bool _isVisible = true;
 
   @override
@@ -99,9 +102,11 @@ class _CreateAccountState extends State<CreateAccount> {
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: fullNameEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "⛔ This field is required";
@@ -163,9 +168,11 @@ class _CreateAccountState extends State<CreateAccount> {
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: emailEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "⛔ This field is required";
@@ -232,9 +239,11 @@ class _CreateAccountState extends State<CreateAccount> {
                 Container(
                   alignment: Alignment.center,
                   child: TextFormField(
+                    enableInteractiveSelection: true,
                     autofocus: false,
                     controller: passwordEditingController,
                     keyboardType: TextInputType.text,
+                    toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
                     obscureText: _isVisible,
                     obscuringCharacter: '#',
                     validator: (value) {
@@ -306,27 +315,43 @@ class _CreateAccountState extends State<CreateAccount> {
                   child: Material(
                     elevation: 0,
                     borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).highlightColor,
+                    color: getStorage.read("changeColor")
+                        ? const Color(0XFFA3333D)
+                        : const Color(0XFF613DC1),
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width,
                       height: 52,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20,
-                          color: Color(0XFFFFFDFA),
-                          letterSpacing: 1.5,
-                          wordSpacing: 1.5,
-                        ),
-                      ),
-                      onPressed: () => createAccount(
-                          emailEditingController.text,
-                          passwordEditingController.text),
+                      onPressed: () {
+                        setState(() {
+                          createAccount(emailEditingController.text,
+                              passwordEditingController.text);
+                          loading = true;
+                        });
+                        Future.delayed(const Duration(seconds: 1), () {
+                          setState(() {
+                            loading = false;
+                          });
+                        });
+                      },
+                      child: loading
+                          ? const CircularProgressIndicator(
+                              color: Color(0XFFFFFDFA),
+                              strokeWidth: 2.0,
+                            )
+                          : const Text(
+                              'Create Account',
+                              style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 20,
+                                color: Color(0XFFFFFDFA),
+                                letterSpacing: 1.5,
+                                wordSpacing: 1.5,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -363,19 +388,22 @@ class _CreateAccountState extends State<CreateAccount> {
 
   void createAccount(String email, String password) async {
     if (_fromKey.currentState!.validate()) {
+      getStorage.write("notes", false);
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) async => {
                 await _firestore.collection('Users').doc(email).set({
                   'fullname': fullNameEditingController.text,
                   'email': email,
-                  'password': password,
+                  //'password': password,
                   'profilepicture': null,
-                  'location': null, 
+                  'location': null,
                 }),
                 Fluttertoast.showToast(
                   msg: "Account created succesfully :) ",
-                  backgroundColor: Theme.of(context).highlightColor,
+                  backgroundColor: getStorage.read("changeColor")
+                      ? const Color(0XFFA3333D)
+                      : const Color(0XFF613DC1),
                   textColor: const Color(0XFFFFFDFA),
                   fontSize: 14.0,
                 ),
@@ -384,7 +412,9 @@ class _CreateAccountState extends State<CreateAccount> {
           .catchError((e) {
         Fluttertoast.showToast(
           msg: e!.message,
-          backgroundColor: Theme.of(context).highlightColor,
+          backgroundColor: getStorage.read("changeColor")
+              ? const Color(0XFFA3333D)
+              : const Color(0XFF613DC1),
           textColor: const Color(0XFFFFFDFA),
           fontSize: 14.0,
         );

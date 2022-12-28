@@ -1,24 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:notely/addnote.dart';
 import 'package:notely/startseite.dart';
+import 'package:get/get.dart';
 
-class NotesPageGrid extends StatefulWidget {
-  const NotesPageGrid({Key? key}) : super(key: key);
+class ArchivePageList extends StatefulWidget {
+  const ArchivePageList({Key? key}) : super(key: key);
 
   @override
-  State<NotesPageGrid> createState() => _NotesPageGridState();
+  State<ArchivePageList> createState() => _ArchivePageListState();
 }
 
-class _NotesPageGridState extends State<NotesPageGrid> {
+class _ArchivePageListState extends State<ArchivePageList> {
+  final _fromKey = GlobalKey<FormState>();
+  final getStorage = GetStorage();
   final _scrollController = ScrollController();
   final searchEditingController = TextEditingController();
-  final getStorage = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -26,47 +26,48 @@ class _NotesPageGridState extends State<NotesPageGrid> {
       alignment: Alignment.topCenter,
       child: Column(
         children: [
+          
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Users')
                 .doc(FirebaseAuth.instance.currentUser?.email)
-                .collection('Notes')
+                .collection('Archive')
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
-                return StaggeredGridView.countBuilder(
+                return ListView.builder(
                   controller: _scrollController,
                   itemCount: snapshot.data?.docs.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     DocumentSnapshot documentData = snapshot.data!.docs[index];
-                    return showGridNotes(
+                    print(snapshot.data!.docs[index]);
+                    return showListNotes(
                       title: documentData["title"],
                       note: documentData["note"],
                       noteId: documentData["noteId"],
                     );
                   },
-                  crossAxisCount: 2,
-                  staggeredTileBuilder: (int index) =>
-                      const StaggeredTile.fit(1),
+                  
                 );
-              } else {
+              }
+              else {
                 return Container();
               }
             },
-          )
+          ),
         ],
       ),
     );
   }
 }
 
-class showGridNotes extends StatefulWidget {
+class showListNotes extends StatefulWidget {
   String title, note, noteId;
 
-  showGridNotes({
+  showListNotes({
     Key? key,
     required this.title,
     required this.note,
@@ -74,10 +75,10 @@ class showGridNotes extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<showGridNotes> createState() => _showGridNotesState();
+  State<showListNotes> createState() => _showListNotesState();
 }
 
-class _showGridNotesState extends State<showGridNotes> {
+class _showListNotesState extends State<showListNotes> {
   final getStorage = GetStorage();
   var isSelected = false;
   static int selected = 0;
@@ -86,32 +87,30 @@ class _showGridNotesState extends State<showGridNotes> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      margin: const EdgeInsets.fromLTRB(5.0, 7.0, 5.0, 7.0),
+      margin: const EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
       child: Column(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width / 2,
-            constraints: const BoxConstraints(
-              maxHeight: double.infinity,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 1.0),
+            width: MediaQuery.of(context).size.width,
+            constraints: const BoxConstraints(),
             child: OutlinedButton(
               onPressed: () {
                 setState(() {
                   if (getStorage.read("isSelected").toString() == "true") {
-                      if (isSelected == true) {
-                        isSelected = false;
-                        selected--;
-                        print(selected);
-                      } else {
-                        isSelected = true;
-                        selected++;
-                        print(selected);
-                      }
-                      if (selected == 0) {
-                        getStorage.write("isSelected", false); 
-                        //Get.to(const StartSeite());
-                      }
-                      
+                    if (isSelected == true) {
+                      isSelected = false;
+                      selected--;
+                      print(selected);
+                    } else {
+                      isSelected = true;
+                      selected++;
+                      print(selected);
+                    }
+                    if (selected == 0) {
+                      getStorage.write("isSelected", false);
+                      //isSelected = false;
+                    }
                   } else {
                     setState(() {
                       getStorage.write("newNote", false);
@@ -140,37 +139,40 @@ class _showGridNotesState extends State<showGridNotes> {
                               const Color(0XFFEAEAEA)
                           ? const Color(0XFF2A2B2E)
                           : const Color(0XFFEAEAEA),
+                  width: isSelected ? 2.0 : 1.0,
                 ),
+                backgroundColor: Colors.transparent,
               ),
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 2.0),
                     alignment: Alignment.centerLeft,
-                    margin: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Text(
                       widget.title,
                       textAlign: TextAlign.left,
+                      maxLines: 1,
                       style: const TextStyle(
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w900,
                         fontSize: 15,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 4.0),
                     alignment: Alignment.centerLeft,
-                    margin: const EdgeInsets.only(bottom: 5.0),
                     child: Text(
                       widget.note,
                       textAlign: TextAlign.left,
+                      maxLines: 1,
                       style: const TextStyle(
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                       ),
-                      //overflow: TextOverflow.ellipsis,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
@@ -193,13 +195,11 @@ class _showGridNotesState extends State<showGridNotes> {
         selected--;
         if (selected == 0) {
           getStorage.write("isSelected", false);
-          //Get.to(const StartSeite());
         }
       } else {
         isSelected = true;
         selected++;
         getStorage.write("isSelected", true);
-        //Get.to(const StartSeite());
       }
     });
   }

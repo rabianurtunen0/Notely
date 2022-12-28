@@ -6,16 +6,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:notely/addnote.dart';
-import 'package:notely/startseite.dart';
 
-class NotesPageGrid extends StatefulWidget {
-  const NotesPageGrid({Key? key}) : super(key: key);
+class ArchivePageGrid extends StatefulWidget {
+  const ArchivePageGrid({Key? key}) : super(key: key);
 
   @override
-  State<NotesPageGrid> createState() => _NotesPageGridState();
+  State<ArchivePageGrid> createState() => _ArchivePageGridState();
 }
 
-class _NotesPageGridState extends State<NotesPageGrid> {
+class _ArchivePageGridState extends State<ArchivePageGrid> {
   final _scrollController = ScrollController();
   final searchEditingController = TextEditingController();
   final getStorage = GetStorage();
@@ -30,7 +29,7 @@ class _NotesPageGridState extends State<NotesPageGrid> {
             stream: FirebaseFirestore.instance
                 .collection('Users')
                 .doc(FirebaseAuth.instance.currentUser?.email)
-                .collection('Notes')
+                .collection('Archive')
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder:
@@ -46,6 +45,7 @@ class _NotesPageGridState extends State<NotesPageGrid> {
                       title: documentData["title"],
                       note: documentData["note"],
                       noteId: documentData["noteId"],
+
                     );
                   },
                   crossAxisCount: 2,
@@ -62,6 +62,12 @@ class _NotesPageGridState extends State<NotesPageGrid> {
     );
   }
 }
+
+
+
+
+
+
 
 class showGridNotes extends StatefulWidget {
   String title, note, noteId;
@@ -98,20 +104,19 @@ class _showGridNotesState extends State<showGridNotes> {
               onPressed: () {
                 setState(() {
                   if (getStorage.read("isSelected").toString() == "true") {
-                      if (isSelected == true) {
-                        isSelected = false;
-                        selected--;
-                        print(selected);
-                      } else {
-                        isSelected = true;
-                        selected++;
-                        print(selected);
-                      }
-                      if (selected == 0) {
-                        getStorage.write("isSelected", false); 
-                        //Get.to(const StartSeite());
-                      }
-                      
+                    if (isSelected == true) {
+                      isSelected = false;
+                      selected--;
+                      print(selected);
+                    } else {
+                      isSelected = true;
+                      selected++;
+                      print(selected);
+                    }
+                    if (selected == 0) {
+                      getStorage.write("isSelected", false);
+                      //isSelected = false;
+                    }
                   } else {
                     setState(() {
                       getStorage.write("newNote", false);
@@ -193,13 +198,11 @@ class _showGridNotesState extends State<showGridNotes> {
         selected--;
         if (selected == 0) {
           getStorage.write("isSelected", false);
-          //Get.to(const StartSeite());
         }
       } else {
         isSelected = true;
         selected++;
         getStorage.write("isSelected", true);
-        //Get.to(const StartSeite());
       }
     });
   }
