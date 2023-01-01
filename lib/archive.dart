@@ -475,6 +475,7 @@ class _ArchiveState extends State<Archive> {
                       ),
                 Container(
                     margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                    color: Theme.of(context).backgroundColor,
                     child: getStorage.read("archive") == 'true'
                         ? getStorage.read("changeView") == 'true'
                             ? const ArchivePageGrid()

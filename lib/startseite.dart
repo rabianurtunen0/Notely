@@ -485,7 +485,7 @@ class _StartSeiteState extends State<StartSeite> {
                       ),
                 Container(
                   margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-                  
+                  color: Theme.of(context).backgroundColor,
                   child: getStorage.read("notes") == 'true'
                       ? getStorage.read("changeView") == 'true'
                           ? const NotesPageGrid()

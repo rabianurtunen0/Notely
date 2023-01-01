@@ -473,6 +473,7 @@ class _TrashState extends State<Trash> {
                       ),
                 Container(
                     margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                    color: Theme.of(context).backgroundColor,
                     child: getStorage.read("trash") == 'true'
                         ? getStorage.read("changeView") == 'true'
                             ? const TrashPageGrid()
