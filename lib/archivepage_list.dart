@@ -24,6 +24,7 @@ class _ArchivePageListState extends State<ArchivePageList> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
+      color: Theme.of(context).backgroundColor,
       child: Column(
         children: [
           

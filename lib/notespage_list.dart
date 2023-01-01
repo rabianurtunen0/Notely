@@ -132,6 +132,7 @@ class _showNotesState extends State<showNotes> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
+      color: Theme.of(context).backgroundColor,
       margin: const EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
       child: Column(
         children: [

@@ -23,6 +23,7 @@ class _ArchivePageGridState extends State<ArchivePageGrid> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
+      color: Theme.of(context).backgroundColor,
       child: Column(
         children: [
           StreamBuilder<QuerySnapshot>(
