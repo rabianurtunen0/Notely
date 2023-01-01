@@ -22,7 +22,7 @@ class _TrashState extends State<Trash> {
   final _scrollController = ScrollController();
   final getStorage = GetStorage();
   static bool selected = true;
-  static bool search = false;
+  bool search = false;
 
   @override
   void initState() {
@@ -35,6 +35,7 @@ class _TrashState extends State<Trash> {
         print(getStorage.read("isSelected"));
       },
     ));
+    getStorage.write("search", "false");
     super.initState();
   }
 
@@ -100,7 +101,11 @@ class _TrashState extends State<Trash> {
                 color: Theme.of(context).textSelectionTheme.selectionColor,
               ),
               onPressed: () {
-                
+                setState(() {
+                  getStorage.read("search") == 'true'
+                      ? getStorage.write("search", "false")
+                      : getStorage.write("search", "true");
+                });
               },
             ),
           ),
@@ -304,6 +309,82 @@ class _TrashState extends State<Trash> {
           ],
         ),
       ),
+      floatingActionButton: getStorage.read("isSelected")
+          ? Container(
+              width: 320,
+              child: FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: getStorage.read("changeColor")
+                    ? const Color(0XFFA3333D)
+                    : const Color(0XFF613DC1),
+                elevation: 20,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0)),
+                child: Row(
+                  children: [
+                    Container(
+                      child: TextButton(
+                          onPressed: () {},
+                          child: SvgPicture.asset(
+                            "assets/images/share.svg",
+                            color: Theme.of(context)
+                                .textSelectionTheme
+                                .selectionColor,
+                          )),
+                    ),
+                    Container(
+                      child: TextButton(
+                          onPressed: () {},
+                          child: SvgPicture.asset(
+                            "assets/images/archive.svg",
+                            color: Theme.of(context)
+                                .textSelectionTheme
+                                .selectionColor,
+                          )),
+                    ),
+                    Container(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: SvgPicture.asset(
+                          "assets/images/trash.svg",
+                          color: Theme.of(context)
+                              .textSelectionTheme
+                              .selectionColor,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: TextButton(
+                          onPressed: () {},
+                          child: SvgPicture.asset(
+                            "assets/images/checkall.svg",
+                            color: Theme.of(context)
+                                .textSelectionTheme
+                                .selectionColor,
+                          )),
+                    ),
+                    Container(
+                      
+                      child: TextButton(
+                          onPressed: () {},
+                          child: Icon(
+                            size: 28,
+                            Icons.close,
+                            color: Theme.of(context)
+                                .textSelectionTheme
+                                .selectionColor,),
+                           
+                          ),
+                    ),
+                  ],
+                ),
+                
+              ),
+              
+            )
+            
+          : null, 
       body: Container(
         padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
         child: Scrollbar(
@@ -313,21 +394,99 @@ class _TrashState extends State<Trash> {
           scrollbarOrientation: ScrollbarOrientation.right,
           child: SingleChildScrollView(
             controller: _scrollController,
-            child: Container(
-                margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
-                child: getStorage.read("trash") == 'true'
-                    ? getStorage.read("changeView") == 'true'
-                        ? const TrashPageGrid()
-                        : const TrashPageList()
-                    : Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 35.0, horizontal: 10.0),
+            child: Column(
+              children: [
+                getStorage.read("search") == 'true'
+                    ? Container(
+                        margin:
+                            const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
                         alignment: Alignment.center,
-                        transformAlignment: Alignment.center,
-                        child: SvgPicture.asset(getStorage.read("changeColor")
-                            ? 'assets/images/trash_picture1.svg'
-                            : "assets/images/trash_picture2.svg"),
-                      )),
+                        height: 30,
+                        child: TextFormField(
+                          autofocus: false,
+                          controller: searchEditingController,
+                          keyboardType: TextInputType.text,
+                          onChanged: (value) {
+                            setState(() {
+                              var searchKey = value;
+                              getStorage.write("searchKey", value);
+                            });
+                          },
+                          onSaved: (newValue) {
+                            searchEditingController.text = newValue!;
+                          },
+                          cursorColor: const Color(0XFF2A2B2E),
+                          textInputAction: TextInputAction.next,
+                          textAlignVertical: TextAlignVertical.bottom,
+                          style: const TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Color(0XFF2A2B2E)),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: const Color(0XFFFFFDFA),
+                            prefixIcon: Container(
+                              margin: const EdgeInsets.fromLTRB(
+                                  10.0, 0.0, 0.0, 0.0),
+                              alignment: Alignment.centerLeft,
+                              width: 8,
+                              height: 8,
+                              child: SvgPicture.asset(
+                                  'assets/images/search2.svg',
+                                  color: const Color(0XFF2A2B2E)),
+                            ),
+                            hintText: 'Search in notes',
+                            hintStyle: const TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Color(0XFF595550),
+                            ),
+                            suffixIcon: Container(
+                                margin: const EdgeInsets.fromLTRB(
+                                    10.0, 0.0, 0.0, 0.0),
+                                alignment: Alignment.centerLeft,
+                                width: 8,
+                                height: 8,
+                                child: const Icon(Icons.close,
+                                    color: Color(0XFF2A2B2E))),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0XFFFFFDFA),
+                              ),
+                              borderRadius: BorderRadius.circular(32.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0XFFFFFDFA),
+                              ),
+                              borderRadius: BorderRadius.circular(32.0),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: Colors.transparent,
+                        height: 0,
+                      ),
+                Container(
+                    margin: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
+                    child: getStorage.read("trash") == 'true'
+                        ? getStorage.read("changeView") == 'true'
+                            ? const TrashPageGrid()
+                            : const TrashPageList()
+                        : Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 35.0, horizontal: 10.0),
+                            alignment: Alignment.center,
+                            transformAlignment: Alignment.center,
+                            child: SvgPicture.asset(getStorage.read("changeColor")
+                                ? 'assets/images/trash_picture1.svg'
+                                : "assets/images/trash_picture2.svg"),
+                          )),
+              ],
+            ),
           ),
         ),
       ),
