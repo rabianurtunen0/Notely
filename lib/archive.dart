@@ -389,6 +389,7 @@ class _ArchiveState extends State<Archive> {
       body: Container(
         height: 2500,
         padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+        color: Theme.of(context).backgroundColor,
         child: Scrollbar(
           controller: _scrollController,
           thickness: 5,

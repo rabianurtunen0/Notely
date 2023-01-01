@@ -387,6 +387,7 @@ class _TrashState extends State<Trash> {
           : null, 
       body: Container(
         padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
+        color: Theme.of(context).backgroundColor,
         child: Scrollbar(
           controller: _scrollController,
           thickness: 5,
