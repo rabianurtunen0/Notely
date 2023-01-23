@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class _CreateAccountState extends State<CreateAccount> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  //final FirebaseDatabase _firedatabase = FirebaseDatabase.instance;
   final _fromKey = GlobalKey<FormState>();
   final getStorage = GetStorage();
 
@@ -395,7 +397,6 @@ class _CreateAccountState extends State<CreateAccount> {
                 await _firestore.collection('Users').doc(email).set({
                   'fullname': fullNameEditingController.text,
                   'email': email,
-                  //'password': password,
                   'profilepicture': null,
                   'location': null,
                 }),

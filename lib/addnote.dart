@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:notely/addlabels.dart';
 import 'package:notely/startseite.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+//import 'package:share_plus/share_plus.dart'; 
 
 class AddNote extends StatefulWidget {
   const AddNote({Key? key}) : super(key: key);
@@ -182,8 +185,7 @@ class _AddNoteState extends State<AddNote> {
   bottomSheet() {
     Get.bottomSheet(
       Container(
-          height: 270,
-          //height: 330.0,
+          height: 330.0,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.vertical(
@@ -207,9 +209,8 @@ class _AddNoteState extends State<AddNote> {
                 splashColor: Colors.transparent,
                 onPressed: () {
                   getStorage.read("newNote").toString() == "true"
-                      ? createNote()
-                      : changeNote();
-                  delete();
+                    ? createNoteDelete()
+                    : changeNoteDelete();
                 },
                 child: Row(
                   children: [
@@ -240,7 +241,10 @@ class _AddNoteState extends State<AddNote> {
               MaterialButton(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {},
+                onPressed: () {
+                  _copy();
+                  _paste();
+                },
                 child: Row(
                   children: [
                     Container(
@@ -270,7 +274,9 @@ class _AddNoteState extends State<AddNote> {
               MaterialButton(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {},
+                onPressed: () {
+                  _share();
+                },
                 child: Row(
                   children: [
                     Container(
@@ -297,10 +303,12 @@ class _AddNoteState extends State<AddNote> {
                   ],
                 ),
               ),
-              /*MaterialButton(
+              MaterialButton(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(const AddLabels());
+                },
                 child: Row(
                   children: [
                     Container(
@@ -326,15 +334,14 @@ class _AddNoteState extends State<AddNote> {
                     ),
                   ],
                 ),
-              ),*/
+              ),
               MaterialButton(
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onPressed: () {
                   getStorage.read("newNote").toString() == "true"
-                      ? createNote()
-                      : changeNote();
-                  archive();
+                    ? createNoteArchive()
+                    : changeNoteArchive();
                 },
                 child: Row(
                   children: [
@@ -367,6 +374,22 @@ class _AddNoteState extends State<AddNote> {
     );
   }
 
+  void changeNote() async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection('Notes')
+        .doc(getStorage.read("noteId"))
+        .update({
+      "title": titleEditingController.text,
+      "note": noteEditingController.text,
+    });
+    getStorage.write("title", titleEditingController.text);
+    getStorage.write("note", noteEditingController.text);
+    if (titleEditingController.text.isEmpty &&
+        noteEditingController.text.isEmpty) {}
+  }
+
   void createNote() async {
     if (titleEditingController.text.isNotEmpty ||
         noteEditingController.text.isNotEmpty) {
@@ -386,6 +409,7 @@ class _AddNoteState extends State<AddNote> {
         'note': noteEditingController.text,
         'date': DateTime.now(),
         'noteId': querySnapshots.id,
+        'labels': [],
       });
       getStorage.write("noteId", querySnapshots.id);
       getStorage.write("date", DateTime.now());
@@ -393,24 +417,8 @@ class _AddNoteState extends State<AddNote> {
       getStorage.write("note", noteEditingController.text);
     }
   }
-
-  void changeNote() async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser?.email)
-        .collection('Notes')
-        .doc(getStorage.read("noteId"))
-        .update({
-      "title": titleEditingController.text,
-      "note": noteEditingController.text,
-    });
-    getStorage.write("title", titleEditingController.text);
-    getStorage.write("note", noteEditingController.text);
-    if (titleEditingController.text.isEmpty &&
-        noteEditingController.text.isEmpty) {}
-  }
-
-  void archive() async {
+  
+  void changeNoteArchive() async {
     var collection = FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser?.email)
@@ -426,34 +434,101 @@ class _AddNoteState extends State<AddNote> {
       print([noteId, date, title, note]);
     });
     if (titleEditingController.text.isNotEmpty ||
-        noteEditingController.text.isNotEmpty) {
+      noteEditingController.text.isNotEmpty) {
       FirebaseFirestore.instance
-          .collection("Users")
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection("Notes")
-          .doc(getStorage.read("noteId").toString())
-          .delete();
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Notes")
+        .doc(getStorage.read("noteId").toString())
+        .delete();
       DocumentReference documentRef = FirebaseFirestore.instance
-          .collection("Users")
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection("Archive")
-          .doc();
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Archive")
+        .doc();
       var querySnapshots = await documentRef.get();
       await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection('Archive')
-          .doc(querySnapshots.id)
-          .set({
-        'title': titleEditingController.text,
-        'note': noteEditingController.text,
-        'date': DateTime.now(),
-        'noteId': querySnapshots.id,
-      });
-    }
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection('Archive')
+        .doc(querySnapshots.id)
+        .set({
+          'title': titleEditingController.text,
+          'note': noteEditingController.text,
+          'date': date,
+          'noteId': querySnapshots.id,
+        });
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note has been archived",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+    else {
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note could not be archived",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
   }
 
-  void delete() async {
+  void createNoteArchive () async {
+    if (titleEditingController.text.isNotEmpty ||
+      noteEditingController.text.isNotEmpty) {
+      DocumentReference documentRef = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Archive")
+        .doc();
+      var querySnapshots = await documentRef.get();
+      await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection('Archive')
+        .doc(querySnapshots.id)
+        .set({
+          'title': titleEditingController.text,
+          'note': noteEditingController.text,
+          'date': DateTime.now(),
+          'noteId': querySnapshots.id,
+        });
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note has been archived",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+    else {
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note could not be archived",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+  }
+  
+  void changeNoteDelete () async {
     var collection = FirebaseFirestore.instance
         .collection('Users')
         .doc(FirebaseAuth.instance.currentUser?.email)
@@ -466,40 +541,101 @@ class _AddNoteState extends State<AddNote> {
     var title = data['title'];
     var note = data['note'];
     setState(() {
-      print([
-        noteId,
-        date,
-        /*DateTime.fromMillisecondsSinceEpoch(date),*/ 
-        title,
-        note
-      ]);
+      print([noteId, date, title, note]);
     });
     if (titleEditingController.text.isNotEmpty ||
-        noteEditingController.text.isNotEmpty) {
+      noteEditingController.text.isNotEmpty) {
       FirebaseFirestore.instance
-          .collection("Users")
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection("Notes")
-          .doc(getStorage.read("noteId").toString())
-          .delete();
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Notes")
+        .doc(getStorage.read("noteId").toString())
+        .delete();
       DocumentReference documentRef = FirebaseFirestore.instance
-          .collection("Users")
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection("Trash")
-          .doc();
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Trash")
+        .doc();
       var querySnapshots = await documentRef.get();
       await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .collection('Trash')
-          .doc(querySnapshots.id)
-          .set({
-        'title': titleEditingController.text,
-        'note': noteEditingController.text,
-        'date': DateTime.now(),
-        'noteId': querySnapshots.id,
-      });
-    }
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection('Trash')
+        .doc(querySnapshots.id)
+        .set({
+          'title': titleEditingController.text,
+          'note': noteEditingController.text,
+          'date': date,
+          'noteId': querySnapshots.id,
+        });
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note has been deleted",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+    else {
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note could not be deleted",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+  }
+
+  void createNoteDelete () async {
+    if (titleEditingController.text.isNotEmpty ||
+      noteEditingController.text.isNotEmpty) {
+      DocumentReference documentRef = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection("Trash")
+        .doc();
+      var querySnapshots = await documentRef.get();
+      await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser?.email)
+        .collection('Trash')
+        .doc(querySnapshots.id)
+        .set({
+          'title': titleEditingController.text,
+          'note': noteEditingController.text,
+          'date': DateTime.now(),
+          'noteId': querySnapshots.id,
+        });
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note has been deleted",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
+    else {
+      Get.to(const StartSeite());
+      Fluttertoast.showToast(
+        msg: "Your note could not be deleted",
+        backgroundColor: getStorage.read("changeColor")
+          ? const Color(0XFFA3333D)
+          : const Color(0XFF613DC1),
+        textColor: const Color(0XFFFFFDFA),
+        fontSize: 14.0,
+        timeInSecForIosWeb: 2,
+      );
+    } 
   }
 
   void delete30() {
@@ -510,4 +646,28 @@ class _AddNoteState extends State<AddNote> {
     print(now);
     //var lastMonth = now - (30 * 24 * 60 * 60 * 1000);
   }
+
+  _copy() {
+    final title = ClipboardData(text: '${titleEditingController.text} \n\n${noteEditingController.text}');
+    Clipboard.setData(title);
+  }
+
+  _paste() async {
+    final data = await Clipboard.getData('text/plain');
+    if (data != null) {
+      setState(() {
+        print(data.text ?? '');
+      });
+    }
+  }
+
+  _share() async {
+    final data = await Clipboard.getData('text/plain');
+    if (data != null) {
+      setState(() {
+        //Share.share(data.text ?? '');
+      });
+    }
+  }
+  
 }

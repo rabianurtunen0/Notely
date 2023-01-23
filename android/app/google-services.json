@@ -37,6 +37,13 @@
             {
               "client_id": "1026276895469-1uidm9aa8rcdq8c4m3o5qsp9pjofe20r.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1026276895469-jd0lj3pnd3ftp8kivsolehu7o7h8sp3c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.notely"
+              }
             }
           ]
         }
