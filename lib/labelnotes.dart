@@ -14,7 +14,6 @@ class LabelNotes extends StatefulWidget {
 class _LabelNotesState extends State<LabelNotes> {
   final _scrollController = ScrollController();
   final getStorage = GetStorage();
-  
 
   @override
   Widget build(BuildContext context) {

@@ -24,7 +24,28 @@ class _LabelsState extends State<Labels> {
   final _scrollController = ScrollController();
   final getStorage = GetStorage();
   bool search = false;
-  bool loading = false;
+  static List<dynamic> listLabels = []; 
+  static List<dynamic> searchLabels = [];
+  bool add_label = false;
+
+  callback(newListLabels, newAdd_label) {
+    setState(() {
+      listLabels = newListLabels;
+      add_label = newAdd_label;
+    });
+  }
+
+  @override
+  void initState () {
+    searchLabels = listLabels;
+    super.initState();
+  }
+
+  void runFilter() {
+    List<dynamic> resultsLabels = [];
+    
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -271,9 +292,10 @@ class _LabelsState extends State<Labels> {
               children: [
                 getStorage.read("search") == 'true'
                     ? Container(
-                        margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0), 
+                        margin: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
                         alignment: Alignment.center,
-                        height: 44,
+                        height: 48,
+                        width: MediaQuery.of(context).size.width,
                         child: TextFormField(
                           autofocus: false,
                           controller: searchEditingController,
@@ -293,6 +315,7 @@ class _LabelsState extends State<Labels> {
                           : const Color(0XFFEAEAEA),
                           textInputAction: TextInputAction.next,
                           textAlignVertical: TextAlignVertical.bottom,
+                          textAlign: TextAlign.left,
                           style: const TextStyle(
                               fontStyle: FontStyle.normal,
                               fontWeight: FontWeight.w700,
@@ -321,7 +344,7 @@ class _LabelsState extends State<Labels> {
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                               color: Color(0XFF595550),
-                            ),
+                            ), 
                             suffixIcon: searchEditingController.text == ""
                               ? null
                               : Container(
@@ -344,17 +367,20 @@ class _LabelsState extends State<Labels> {
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Theme.of(context).backgroundColor ==
-                              const Color(0XFFEAEAEA)
-                          ? const Color(0XFF2A2B2E)
-                          : const Color(0XFFEAEAEA),
+                                  const Color(0XFFEAEAEA)
+                                      ? const Color(0XFF2A2B2E)
+                                      : const Color(0XFFEAEAEA),
                               ),
-                              borderRadius: BorderRadius.circular(32.0),
+                              borderRadius: BorderRadius.circular(16.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                //color: Color(0XFFFFFDFA),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).backgroundColor ==
+                                  const Color(0XFFEAEAEA)
+                                      ? const Color(0XFF2A2B2E)
+                                      : const Color(0XFFEAEAEA),
                               ),
-                              borderRadius: BorderRadius.circular(32.0),
+                              borderRadius: BorderRadius.circular(16.0),
                             ),
                           ),
                         ),
@@ -363,116 +389,131 @@ class _LabelsState extends State<Labels> {
                         color: Colors.transparent,
                         height: 0,
                       ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.fromLTRB(4.0, 20.0, 0.0, 8.0),
-                  child: Text(
-                    'New label',
-                    style: TextStyle(
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color:
-                          Theme.of(context).textSelectionTheme.selectionColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  margin: const EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 320,
-                        height: 48,
-                        child: TextFormField(
-                          enableInteractiveSelection: true,
-                          autofocus: false,
-                          controller: labelEditingController,
-                          keyboardType: TextInputType.text,
-                          toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
-                          onSaved: (newValue) {
-                            labelEditingController.text = newValue!;
-                          },
-                          cursorColor: const Color(0XFF2A2B2E),
-                          textInputAction: TextInputAction.next,
-                          textAlignVertical: TextAlignVertical.center,
+                searchEditingController.text.isNotEmpty 
+                    ? Container(
+                        color: Colors.transparent,
+                        height: 0,
+                      )
+                    : Container(
+                        alignment: Alignment.topLeft,
+                        margin: const EdgeInsets.fromLTRB(4.0, 20.0, 0.0, 8.0),
+                        child: Text(
+                          'New label',
                           style: TextStyle(
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w700,
-                            fontSize: 16,
+                            fontSize: 14,
                             color: Theme.of(context).textSelectionTheme.selectionColor,
                           ),
-                          decoration: InputDecoration(
-                          filled: true,
-                          fillColor: const Color(0XFFFFFDFA),
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(12.0, 13.0, 12.0, 13.0),
-                          hintText: 'Enter label name..',
-                          hintStyle: TextStyle(
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: Theme.of(context).textSelectionTheme.selectionColor,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
-                    ),
-
                         ),
                       ),
-                      Container(
-                        width:48,
-                        height:48,
-                        margin: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                        child: Material(
-                    elevation: 0,
-                    borderRadius: BorderRadius.circular(12.0),
-                    color: getStorage.read("changeColor")
-                        ? const Color(0XFFA3333D)
-                        : const Color(0XFF613DC1),
-                    child: MaterialButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      onPressed: () {
-                        createLabel();
-                        Future.delayed(const Duration(seconds: 1), () {
-                          setState(() {
-                            loading = false;
-                          });
-                        });
-                      },
-                      child: loading
-                          ? const CircularProgressIndicator(
-                              color: Color(0XFFFFFDFA),
-                              strokeWidth: 2.0,
-                            )
-                          : SvgPicture.asset(
-                              'assets/images/check.svg',
-                              width: 30,
-                              height: 30,
-                              color: const Color(0XFFFFFDFA),
+                searchEditingController.text.isNotEmpty 
+                    ? Container(
+                        color: Colors.transparent,
+                        height: 0,
+                      )
+                    : Container(
+                        alignment: Alignment.topCenter,
+                        margin: const EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 20.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 320,
+                              height: 48,
+                              child: TextFormField(
+                                enableInteractiveSelection: true,
+                                autofocus: false,
+                                controller: labelEditingController,
+                                keyboardType: TextInputType.text,
+                                toolbarOptions: const ToolbarOptions(paste: true, cut: true, selectAll: true, copy: true),
+                                onSaved: (newValue) {
+                                  labelEditingController.text = newValue!;
+                                },
+                                cursorColor: const Color(0XFF2A2B2E),
+                                maxLines: 1,
+                                textInputAction: TextInputAction.next,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: TextStyle(
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: Theme.of(context).textSelectionTheme.selectionColor,
+                                ),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: const Color(0XFFFFFDFA),
+                                  contentPadding:
+                                      const EdgeInsets.fromLTRB(12.0, 13.0, 12.0, 13.0),
+                                  hintText: 'Enter label name..',
+                                  hintStyle: TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                    color: Theme.of(context).textSelectionTheme.selectionColor,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Color(0XFFFFFDFA)),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                  ),
+                                ),
+                              ),
                             ),
-                    ),
-                  ),
+                            Container(
+                              width:48,
+                              height:48,
+                              margin: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                              child: Material(
+                                elevation: 0,
+                                borderRadius: BorderRadius.circular(12.0),
+                                color: getStorage.read("changeColor")
+                                    ? const Color(0XFFA3333D)
+                                    : const Color(0XFF613DC1),
+                                child: MaterialButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                  ),
+                                  onPressed: () {
+                                    add_label = true;
+                                    createLabel();
+                                  },
+                                  child: SvgPicture.asset(
+                                    'assets/images/check.svg',
+                                    width: 30,
+                                    height: 30,
+                                    color: const Color(0XFFFFFDFA),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
                 Container(
                   alignment: Alignment.center,
                   color: Theme.of(context).backgroundColor,
-                  child: StreamBuilder<QuerySnapshot>(
+                  child: searchEditingController.text.isNotEmpty 
+                    ? ListView.builder(
+                      controller: _scrollController,
+                      itemCount: searchLabels.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return showLabels(
+                          label: listLabels[index][0], 
+                          labelId: listLabels[index][1],
+                          listLabels: listLabels, 
+                          add_label: add_label, 
+                          callback: callback
+                        );
+                      }
+                      )
+                    : StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('Users')
                           .doc(FirebaseAuth.instance.currentUser?.email)
@@ -492,6 +533,9 @@ class _LabelsState extends State<Labels> {
                               return showLabels(
                                 label: documentData["label"],
                                 labelId: documentData["labelId"],
+                                listLabels: listLabels,
+                                add_label: add_label,
+                                callback: callback,
                               );
                             },
                           );
@@ -528,6 +572,8 @@ class _LabelsState extends State<Labels> {
           'labelId': querySnapshots.id,
           'date': DateTime.now(),
         });
+    listLabels.add([labelEditingController.text, querySnapshots.id]);
+    print(listLabels);
     labelEditingController.clear();
     }
     else {
@@ -546,11 +592,17 @@ class _LabelsState extends State<Labels> {
 
 class showLabels extends StatefulWidget {
   String label, labelId;
+  List listLabels;
+  bool add_label;
+  Function(String, String) callback;
 
   showLabels({
     Key? key,
     required this.label,
     required this.labelId,
+    required this.listLabels,
+    required this.add_label,
+    required this.callback,
   }) : super(key: key);
 
   @override
@@ -562,6 +614,13 @@ class _showLabelsState extends State<showLabels> {
   late final labelEditEditingController = TextEditingController(text: widget.label);
   bool edit = false;
   int editNumber = 0;
+  
+  void initState() {
+    widget.add_label == false 
+        ? widget.listLabels.add([widget.label, widget.labelId]) 
+        : null;
+    print(widget.listLabels);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -573,6 +632,7 @@ class _showLabelsState extends State<showLabels> {
           onPressed: () {
             setState(() {
               getStorage.write("labelName", widget.label);
+              widget.listLabels.clear();
               Get.to(const LabelNotes());
             });
           },
@@ -603,6 +663,14 @@ class _showLabelsState extends State<showLabels> {
                   padding: const EdgeInsets.all(0.0),
                   alignment: Alignment.centerLeft,
                   onPressed: () {
+                    int select = 0;
+                    for (var label in widget.listLabels) {
+                      if (label[1] == widget.labelId) {
+                        select = widget.listLabels.indexOf(label);
+                      }
+                    }
+                    widget.listLabels.removeAt(select);
+                    print(widget.listLabels);
                     deleteLabel();
                     edit = false;
                   },
@@ -693,6 +761,13 @@ class _showLabelsState extends State<showLabels> {
                     padding: EdgeInsets.zero,
                     alignment: Alignment.centerRight,
                     onPressed: () {
+                      int select = 0;
+                      for (var label in widget.listLabels) {
+                        if (label[1] == widget.labelId) {
+                          select = widget.listLabels.indexOf(label);
+                        }
+                      }
+                      widget.listLabels.removeAt(select);
                       editLabel();
                       edit = false;
                     },
@@ -740,6 +815,8 @@ class _showLabelsState extends State<showLabels> {
         .update({
       "label": labelEditEditingController.text,
     });
+    widget.listLabels.add([labelEditEditingController.text, widget.labelId]);
+    print(widget.listLabels);
   }
 
   void deleteLabel () async {
@@ -750,4 +827,5 @@ class _showLabelsState extends State<showLabels> {
         .doc(widget.labelId)
         .delete();
   }
+  
 }

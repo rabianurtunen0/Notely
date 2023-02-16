@@ -515,7 +515,6 @@ class _TrashState extends State<Trash> {
                                           noteId: documentData["noteId"],
                                           isSelected: isSelected,
                                           callback: callback,
-                                          // callbackColor: callbackColor,
                                           colorSelected: colorSelected,
                                         );
                                       },

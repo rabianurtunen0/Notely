@@ -17,7 +17,7 @@ class AddLabels extends StatefulWidget {
 class _AddLabelsState extends State<AddLabels> {
   final _scrollController = ScrollController();
   final getStorage = GetStorage();
-  final searchEditingController = TextEditingController();  
+  final searchEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +286,7 @@ class _showLabelsState extends State<showLabels> {
           onPressed: () {
             setState(() {
              
-            });
+            }); 
           },
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -331,15 +331,14 @@ class _showLabelsState extends State<showLabels> {
                       ? list_labels.remove(widget.label) 
                       : list_labels.add(widget.label);
                       
-                });
-                    
-/*
+                });     
+                  /*
                     for(var i = 0; i<=list_labels.length; i++) {
                         list_labels[i] == widget.label 
                           ? list_labels.remove(widget.label)
                           : list_labels.add(widget.label);
                       }
-                    */
+                  */
                     print(list_labels);
                 
                 },
